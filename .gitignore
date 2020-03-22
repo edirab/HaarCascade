@@ -1,0 +1,13 @@
+.vs/
+*.exe
+*.pdb
+*.lik
+*.idb
+*.log
+*.tlog
+*.tlog/
+*.obj
+without_720p/
+with_720p/
+with.mp4
+without.mp4
