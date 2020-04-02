@@ -70,7 +70,7 @@ int main(int argc, const char** argv) {
 }
 void detect_Display(Mat frame)
 {
-	cout << "Inside detect_Display";
+	//cout << "Inside detect_Display";
 
 	Mat frame_gray;
 	cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
@@ -87,9 +87,9 @@ void detect_Display(Mat frame)
 	{
 		cout << "X = " << objects[i].x << " Y = " << objects[i].y;
 
-		//Point center(objects[i].x + objects[i].width / 2, objects[i].y + objects[i].height / 2);
+		Point center(objects[i].x + objects[i].width / 2, objects[i].y + objects[i].height / 2);
 
-		//ellipse(frame, center, Size(objects[i].width / 2, objects[i].height / 2), 0, 0, 360, Scalar(255, 0, 255), 4);
+		ellipse(frame, center, Size(objects[i].width / 2, objects[i].height / 2), 0, 0, 360, Scalar(255, 0, 255), 4);
 
 		//Mat faceROI = frame_gray(objects[i]);
 
