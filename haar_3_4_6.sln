@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "haar_3_4_6", "haar_3_4_6\ha
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "webcam_stream", "webcam_stream\webcam_stream.vcxproj", "{8A40A6B9-3FDA-435A-9604-23D05FEE9C18}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CUDA_quick_sort", "CUDA_quick_sort\CUDA_quick_sort.vcxproj", "{CC673F33-5F96-4F8F-9F54-75EA90A2F472}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,12 @@ Global
 		{8A40A6B9-3FDA-435A-9604-23D05FEE9C18}.Release|x64.Build.0 = Release|x64
 		{8A40A6B9-3FDA-435A-9604-23D05FEE9C18}.Release|x86.ActiveCfg = Release|Win32
 		{8A40A6B9-3FDA-435A-9604-23D05FEE9C18}.Release|x86.Build.0 = Release|Win32
+		{CC673F33-5F96-4F8F-9F54-75EA90A2F472}.Debug|x64.ActiveCfg = Debug|x64
+		{CC673F33-5F96-4F8F-9F54-75EA90A2F472}.Debug|x64.Build.0 = Debug|x64
+		{CC673F33-5F96-4F8F-9F54-75EA90A2F472}.Debug|x86.ActiveCfg = Debug|x64
+		{CC673F33-5F96-4F8F-9F54-75EA90A2F472}.Release|x64.ActiveCfg = Release|x64
+		{CC673F33-5F96-4F8F-9F54-75EA90A2F472}.Release|x64.Build.0 = Release|x64
+		{CC673F33-5F96-4F8F-9F54-75EA90A2F472}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
