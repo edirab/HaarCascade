@@ -9,6 +9,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "webcam_stream", "webcam_str
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CUDA_quick_sort", "CUDA_quick_sort\CUDA_quick_sort.vcxproj", "{CC673F33-5F96-4F8F-9F54-75EA90A2F472}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CUDA_haar_1", "CUDA_haar_1\CUDA_haar_1.vcxproj", "{6B2F9AB8-F94E-4220-A030-C9E3925A0696}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CUDA_haar_example", "CUDA_haar_example\CUDA_haar_example.vcxproj", "{97D73BEE-2CF7-4F9D-B405-E12A965A6C8D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -39,6 +43,18 @@ Global
 		{CC673F33-5F96-4F8F-9F54-75EA90A2F472}.Release|x64.ActiveCfg = Release|x64
 		{CC673F33-5F96-4F8F-9F54-75EA90A2F472}.Release|x64.Build.0 = Release|x64
 		{CC673F33-5F96-4F8F-9F54-75EA90A2F472}.Release|x86.ActiveCfg = Release|x64
+		{6B2F9AB8-F94E-4220-A030-C9E3925A0696}.Debug|x64.ActiveCfg = Debug|x64
+		{6B2F9AB8-F94E-4220-A030-C9E3925A0696}.Debug|x64.Build.0 = Debug|x64
+		{6B2F9AB8-F94E-4220-A030-C9E3925A0696}.Debug|x86.ActiveCfg = Debug|x64
+		{6B2F9AB8-F94E-4220-A030-C9E3925A0696}.Release|x64.ActiveCfg = Release|x64
+		{6B2F9AB8-F94E-4220-A030-C9E3925A0696}.Release|x64.Build.0 = Release|x64
+		{6B2F9AB8-F94E-4220-A030-C9E3925A0696}.Release|x86.ActiveCfg = Release|x64
+		{97D73BEE-2CF7-4F9D-B405-E12A965A6C8D}.Debug|x64.ActiveCfg = Debug|x64
+		{97D73BEE-2CF7-4F9D-B405-E12A965A6C8D}.Debug|x64.Build.0 = Debug|x64
+		{97D73BEE-2CF7-4F9D-B405-E12A965A6C8D}.Debug|x86.ActiveCfg = Debug|x64
+		{97D73BEE-2CF7-4F9D-B405-E12A965A6C8D}.Release|x64.ActiveCfg = Release|x64
+		{97D73BEE-2CF7-4F9D-B405-E12A965A6C8D}.Release|x64.Build.0 = Release|x64
+		{97D73BEE-2CF7-4F9D-B405-E12A965A6C8D}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

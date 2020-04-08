@@ -18,7 +18,7 @@
     <ClCompile Include="known_example.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="haar_waiter.cpp">
+    <ClCompile Include="haar_3_4_6.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
