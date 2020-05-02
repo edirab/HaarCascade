@@ -1,20 +1,36 @@
 .vs/
-CUDA_simple_quick_sort/
 
+# это ещё не готово
+CUDA_*/
+
+# Архивы
+*.zip
+
+# автоматически сгенерированные
 *.exe
-*.pdb
+
 *.lik
 *.ilk
+
+*.pdb
 *.exp
 *.lib
 
+*.iobj
+*.ipdb
 *.idb
+
 *.log
 *.tlog
 *.tlog/
 *.obj
 
-without_720p/
-with_720p/
-with.mp4
-without.mp4
+# видео и изображения не нужны, однако
+# структуру каталогов сохраним
+preparing data/videos/*.mp4
+preparing data/extracted_images/with/*.jpg
+preparing data/extracted_images/without/*.jpg
+preparing data/extracted_images/with_800/*.jpg
+preparing data/extracted_images/without_800/*.jpg
+
+!preparing data/*.exe

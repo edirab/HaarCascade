@@ -51,16 +51,17 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;opencv_calib3d349d.lib;opencv_core349d.lib;opencv_features2d349d.lib;opencv_flann349d.lib;opencv_highgui349d.lib;opencv_imgcodecs349d.lib;opencv_imgproc349d.lib;opencv_ml349d.lib;opencv_objdetect349d.lib;opencv_photo349d.lib;opencv_shape349d.lib;opencv_stitching349d.lib;opencv_superres349d.lib;opencv_video349d.lib;opencv_videoio349d.lib;opencv_videostab349d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;opencv_cudaarithm349d.lib;opencv_cudabgsegm349d.lib;opencv_cudacodec349d.lib;opencv_cudafeatures2d349d.lib;opencv_cudafilters349d.lib;opencv_cudaimgproc349d.lib;opencv_cudalegacy349d.lib;opencv_cudaobjdetect349d.lib;opencv_cudaoptflow349d.lib;opencv_cudastereo349d.lib;opencv_cudawarping349d.lib;opencv_cudev349d.lib;opencv_calib3d349d.lib;opencv_core349d.lib;opencv_features2d349d.lib;opencv_flann349d.lib;opencv_highgui349d.lib;opencv_imgcodecs349d.lib;opencv_imgproc349d.lib;opencv_ml349d.lib;opencv_objdetect349d.lib;opencv_photo349d.lib;opencv_shape349d.lib;opencv_stitching349d.lib;opencv_superres349d.lib;opencv_video349d.lib;opencv_videoio349d.lib;opencv_videostab349d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Program Files\opencv-3-4-9\build\install\x64\vc16\bin;C:\Program Files\opencv-3-4-9\build\install\x64\vc16\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
       <AdditionalDeps>%(AdditionalDeps)</AdditionalDeps>
-      <Include>C:\Program Files\opencv-3-4-9\build\install\include</Include>
+      <Include>C:\Program Files\opencv-3-4-9\build\install\include\</Include>
+      <UseHostInclude>false</UseHostInclude>
     </CudaCompile>
     <CudaLink>
-      <AdditionalDependencies>cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;opencv_calib3d349d.lib;opencv_core349d.lib;opencv_features2d349d.lib;opencv_flann349d.lib;opencv_highgui349d.lib;opencv_imgcodecs349d.lib;opencv_imgproc349d.lib;opencv_ml349d.lib;opencv_objdetect349d.lib;opencv_photo349d.lib;opencv_shape349d.lib;opencv_stitching349d.lib;opencv_superres349d.lib;opencv_video349d.lib;opencv_videoio349d.lib;opencv_videostab349d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cudart_static.lib;opencv_cudaarithm349d.lib;opencv_cudabgsegm349d.lib;opencv_cudacodec349d.lib;opencv_cudafeatures2d349d.lib;opencv_cudafilters349d.lib;opencv_cudaimgproc349d.lib;opencv_cudalegacy349d.lib;opencv_cudaobjdetect349d.lib;opencv_cudaoptflow349d.lib;opencv_cudastereo349d.lib;opencv_cudawarping349d.lib;opencv_cudev349d.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;opencv_calib3d349d.lib;opencv_core349d.lib;opencv_features2d349d.lib;opencv_flann349d.lib;opencv_highgui349d.lib;opencv_imgcodecs349d.lib;opencv_imgproc349d.lib;opencv_ml349d.lib;opencv_objdetect349d.lib;opencv_photo349d.lib;opencv_shape349d.lib;opencv_stitching349d.lib;opencv_superres349d.lib;opencv_video349d.lib;opencv_videoio349d.lib;opencv_videostab349d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Program Files\opencv-3-4-9\build\install\x64\vc16\lib;C:\Program Files\opencv-3-4-9\build\install\x64\vc16\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </CudaLink>
   </ItemDefinitionGroup>

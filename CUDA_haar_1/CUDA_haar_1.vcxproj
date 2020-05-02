@@ -41,6 +41,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Program Files\opencv-3-4-9\build\install\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -58,6 +59,7 @@
       <TargetMachinePlatform>64</TargetMachinePlatform>
       <AdditionalDeps>%(AdditionalDeps)</AdditionalDeps>
       <Include>C:\Program Files\opencv-3-4-9\build\install\include</Include>
+      <UseHostInclude>false</UseHostInclude>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

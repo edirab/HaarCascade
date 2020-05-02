@@ -4,9 +4,6 @@
 #endif
 
 
-#include <iostream>
-#include <iomanip>
-
 #include "opencv2/objdetect.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
@@ -15,6 +12,9 @@
 #include "opencv2/cudaimgproc.hpp"
 #include "opencv2/cudawarping.hpp"
 
+#include <iostream>
+#include <iomanip>
+
 using namespace std;
 using namespace cv;
 using namespace cv::cuda;
@@ -22,8 +22,8 @@ using namespace cv::cuda;
 
 static void help()
 {
-	cout << "Usage: ./cascadeclassifier \n\t--cascade <cascade_file>\n\t(<image>|--video <video>|--camera <camera_id>)\n"
-		"Using OpenCV version " << CV_VERSION << endl << endl;
+	cout << "Usage: ./cascadeclassifier \n\t--cascade <cascade_file>\n\t(<image>|--video <video>|--camera <camera_id>)\n";
+	cout << "Using OpenCV version " << cv::CV_VERSION << endl << endl;
 }
 
 
