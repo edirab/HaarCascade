@@ -28,6 +28,8 @@ CUDA_*/
 # видео и изображения не нужны, однако
 # структуру каталогов сохраним
 preparing data/videos/*.mp4
+
+preparing data/extracted_images/**/*.jpg
 preparing data/extracted_images/with/*.jpg
 preparing data/extracted_images/without/*.jpg
 preparing data/extracted_images/with_800/*.jpg
