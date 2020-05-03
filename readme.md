@@ -1,23 +1,41 @@
-#### Пример обучения каскада Хаара
+### Пример обучения каскада Хаара
 
-- Пример работы каскада - в папке haar_3_4_6
-- Подготовка данных для обучения - папка preparing data
+##### Содержимое репозитория
 
-	Результат работы классификатора лежит в папке **preparing_data/haar_results2**
+- Пример работы каскада - в папке **/haar_3_4_6**
 
-	- Использовано 200 позитивных и 499 негативных примеров разрешением 640х480 пикселей.
+- Видео **waiter.mp4** в качестве тестового
 
-	- Позитивные примеры (**305 шт.**) размечены вручную с помощью утилиты
+- Подготовка данных и обучение - папка **/preparing data**
 
-	> opencv_annotation.exe -a=good.dat -i=with_resized
+    - Папка **extracted_images** с подготовленным набором исходных изображений для обучения
+	- Обученные каскадные классификаторы находятся в папках **/preparing_data/haar_results_vХ/**
+	    + для каждого каскада имеется файл **samples\*.vec**
+	    + **OUTPUT.log**
+	- Скрипты для автоматизации администрирования файлов
+	    + **create_bad_dat.py** - создание файла с фоновыми изображениями
+	    + **find_wrong_good.py** - проверка *good.dat* на наличие ошибок
+	    + **move_files.py** - перемещение уже обработанных изображений в поддиректорию 
+	    (в случае прежджевременного завершения работы *opencv_annotation.exe*)
+	    + **fix_pathes.py** - для исправления путей файлов после перемещения
+	     
+	- Файлы **bad.dat**, **good.dat** && **good_fixed.dat**
+	- вложенный **readme.md** с подробной инструкцией по подготовке данных и обучению каскада
+	
 
-	- Размеры примитива по умолчанию: 24 х 24 пикселя 
-	> opencv_createsamples.exe -info good.dat -vec samples2.vec -show
-	>
-	> opencv_traincascade.exe -data haar_results2 -vec samples2.vec -bg bad.dat -numStages 16 -numThreads 12 -precalcValBufSize 2048 -precalcIdxBufSize 2048 -minhitrate 0.990 -maxFalseAlarmRate 0.5 -numPos 200 -numNeg 499 -mode ALL
+	
+![](./first_success.png)
 
-		===== TRAINING 12-stage =====
-		<BEGIN
-		POS count : consumed   200 : 200
-		NEG count : acceptanceRatio    0 : 0
-		Required leaf false alarm rate achieved. Branch training terminated.
+***
+
+### Сводная таблица параметров каскадов
+
+Название |      Позитивных |      Негативных |      Width |         Height   | unique features | Time |
+--------------- | ------------- | ------------- | ------------- | ------------- | ------------- | -----------
+haar_results_v5 |   1200    |      2955      |      22       |      24       |    219 180    |  1h 4m 31s
+--------------- |   ---     |       ---      |      --       |      --       |    --- ---    |  -- -- --
+haar_results_v4 |   200     |       600      |      22       |      24       |      219 180  |  0h 2m 2s
+haar_results_v3 |   200     |       600      |      33       |      36       |    1 121 307  |  1h 22m 21s
+haar_results_v2 |   200     |       600      |      42       |      48       |    3 239 144  |  1h 50m 52s
+
+    Как видно из таблицы, колчество уникальных свойств зависит от размера окна сканирования
