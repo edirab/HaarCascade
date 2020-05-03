@@ -49,6 +49,8 @@
 6. Обучаем каскад командой
 
         opencv_traincascade.exe -data haar_results_v2 -vec samples.vec -bg bad.dat -numStages 16 -numThreads 10 -w 42 -h 48 -precalcValBufSize 2048 -precalcIdxBufSize 2048 -minhitrate 0.995 -maxFalseAlarmRate 0.5 -numPos 1200 -numNeg 2955 -mode ALL
+        opencv_traincascade.exe -data haar_results_v2 -vec samples.vec -bg bad.dat -numStages 16 -numThreads 12 -w 42 -h 48 -numPos 1200 -numNeg 2955 -mode ALL
+        opencv_traincascade.exe -data haar_results_v2 -vec samples.vec -bg bad.dat -numStages 16 -numThreads 12 -w 42 -h 48 -numPos 200 -numNeg 600 -mode ALL
 
         opencv_traincascade.exe -data haar_results2 -vec samples2.vec -bg bad.dat -numStages 16 
         -numThreads 12 -precalcValBufSize 2048 -precalcIdxBufSize 2048 -minhitrate 0.990 
