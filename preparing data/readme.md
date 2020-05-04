@@ -59,6 +59,10 @@
      
             opencv_createsamples.exe -info good_fixed.dat -vec samples_22_24.vec -num 1372 -w 22 -h 24 -show
             
+    - **haar_results_v6:**
+     
+            opencv_createsamples.exe -info good_fixed.dat -vec samples_22_24_v6.vec -num 1663 -w 22 -h 24 -show
+            
     - **Тестовая команда**
     
             opencv_createsamples.exe -info good_fixed.dat -vec samples.vec -num 10 -w 100 -h 100 -show
@@ -94,6 +98,10 @@
     - **haar_results_v5:** 
     
             opencv_traincascade.exe -data haar_results_v5 -vec samples_22_24.vec -bg bad.dat -numStages 16 -numThreads 12 -w 22 -h 24 -numPos 1200 -numNeg 2955 -mode ALL
+
+    - **haar_results_v6:** 
+    
+            opencv_traincascade.exe -data haar_results_v6 -vec samples_22_24_v6.vec -bg bad.dat -numStages 16 -numThreads 12 -w 22 -h 24 -numPos 1600 -numNeg 2955 -mode ALL
 
     - **То, что должно быть в идеале:**
     
