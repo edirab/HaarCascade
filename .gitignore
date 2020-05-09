@@ -38,3 +38,10 @@ preparing data/extracted_images/with_800/*.jpg
 preparing data/extracted_images/without_800/*.jpg
 
 !preparing data/*.exe
+
+
+
+navigation/pyramid.mp4
+navigation/extracted_images/with*/*.jpg
+
+!navigation/extracted_images/with*/pyramid0001.jpg
