@@ -2,6 +2,7 @@
 
 # это ещЄ не готово
 CUDA_*/
+cuda/
 
 # јрхивы
 *.zip
@@ -40,13 +41,12 @@ preparing data/extracted_images/without_800/*.jpg
 !preparing data/*.exe
 
 
+preparing navigation/videos/pyramid.mp4
+preparing navigation/extracted_images/with*/*.jpg
+preparing navigation/extracted_images/with_original/already_processed/*.jpg
+preparing navigation/extracted_images/with_original/manually_filtering/*.jpg
 
-navigation/videos/pyramid.mp4
-navigation/extracted_images/with*/*.jpg
-navigation/extracted_images/with_original/already_processed/*.jpg
-navigation/extracted_images/with_original/manually_filtering/*.jpg
+!preparing navigation/extracted_images/with*/pyramid0639.jpg
+!preparing navigation/extracted_images/with*/already_processed/pyramid0001.jpg
 
-!navigation/extracted_images/with*/pyramid0639.jpg
-!navigation/extracted_images/with*/already_processed/pyramid0001.jpg
-
-!navigation/*.exe
+!preparing navigation/*.exe

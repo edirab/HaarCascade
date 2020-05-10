@@ -129,10 +129,35 @@
             opencv_traincascade.exe -data haar_results_v2 -vec samples.vec -bg bad.dat -numStages 16 -numThreads 12 
             -w 42 -h 48 -numPos 1200 -numNeg 2955 -mode ALL
         
+7. Визуализация работы обученного каскада
+
+(работает странно)
+
+		opencv_visualisation.exe -i=217586.bmp -m=haar_results/cascade.xml -d=visual_results/
+
 
 ***
+
+### 2. Решение проблемы с ошибкой 
+#### Bad argument (Can not get new positive sample. The most possible reason is insufficient count of samples in given vec-file
+
+https://answers.opencv.org/question/4368/traincascade-error-bad-argument-can-not-get-new-positive-sample-the-most-possible-reason-is-insufficient-count-of-samples-in-given-vec-file/
+
+Формула для расчёта необходимого количества изображений:
+
+> vec-file has to contain >= (numPose + (numStages-1) * (1 - minHitRate) * numPose) + S
+
+1. Увеличить разницу в количестве позитивных изображений, передаваемых каскаду для обучения,
+и общего числа изображений, использованных для создания vec-файла. К примеру, при создании вектора
+было указано 600 изображений, а traincascade передать аргумент -numPos=500
+
+2. Уменьшить minHitRate
+
+3. Таки увеличить количество позитивных изображений (потребуется заново создать vec-файл)
 		
-### 2. Проблемы с Git:
+***
+
+### 3. Проблемы с Git:
 
 1. Отменитиь git add .
 

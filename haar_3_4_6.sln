@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CUDA_haar_1", "CUDA_haar_1\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CUDA_haar_example", "CUDA_haar_example\CUDA_haar_example.vcxproj", "{97D73BEE-2CF7-4F9D-B405-E12A965A6C8D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "haar_navigation", "haar_navigation\haar_navigation.vcxproj", "{6E03BED3-DD41-4586-ACE1-C5CBEC085062}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -55,6 +57,14 @@ Global
 		{97D73BEE-2CF7-4F9D-B405-E12A965A6C8D}.Release|x64.ActiveCfg = Release|x64
 		{97D73BEE-2CF7-4F9D-B405-E12A965A6C8D}.Release|x64.Build.0 = Release|x64
 		{97D73BEE-2CF7-4F9D-B405-E12A965A6C8D}.Release|x86.ActiveCfg = Release|x64
+		{6E03BED3-DD41-4586-ACE1-C5CBEC085062}.Debug|x64.ActiveCfg = Debug|x64
+		{6E03BED3-DD41-4586-ACE1-C5CBEC085062}.Debug|x64.Build.0 = Debug|x64
+		{6E03BED3-DD41-4586-ACE1-C5CBEC085062}.Debug|x86.ActiveCfg = Debug|Win32
+		{6E03BED3-DD41-4586-ACE1-C5CBEC085062}.Debug|x86.Build.0 = Debug|Win32
+		{6E03BED3-DD41-4586-ACE1-C5CBEC085062}.Release|x64.ActiveCfg = Release|x64
+		{6E03BED3-DD41-4586-ACE1-C5CBEC085062}.Release|x64.Build.0 = Release|x64
+		{6E03BED3-DD41-4586-ACE1-C5CBEC085062}.Release|x86.ActiveCfg = Release|Win32
+		{6E03BED3-DD41-4586-ACE1-C5CBEC085062}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
