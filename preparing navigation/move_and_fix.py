@@ -1,17 +1,13 @@
 import shutil
 
-abs_path = 'E:/University/10sem/nirs/haar_3_4_6/navigation/'
+abs_path = 'E:/University/10sem/nirs/haar_3_4_6/preparing navigation/'
 
 f = open(abs_path+'good_1.dat')
-# f = open(abs_path+'good_1.dat')
+f_fixed = open(abs_path+'good_1_fixed.dat', 'a')
 
 data = f.readlines()
 print(type(data))
 
-# data = f.read()
-# print(data[:500])
-
-print("------------- ")
 for line in data:
     line = line.strip()
 
@@ -25,3 +21,8 @@ for line in data:
     except FileNotFoundError:
         print(file_name, " does not exist")
 
+for line in data:
+    line = line.strip().split('\\')
+    new_line = line[0] + "/already_processed/" + line[1] + "\n"
+    print(new_line, end = '')
+    f_fixed.write(new_line)
