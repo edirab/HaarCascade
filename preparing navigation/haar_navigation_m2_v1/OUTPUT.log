@@ -1,0 +1,22 @@
+E:\University\10sem\nirs\haar_3_4_6\preparing navigation>opencv_createsamples.exe -info good_2_fixed.dat -vec samples_navigation_m2_v1.vec -num 600 -w 24 -h 24 -show
+Info file name: good_2_fixed.dat
+Img file name: (NULL)
+Vec file name: samples_navigation_m2_v1.vec
+BG  file name: (NULL)
+Num: 600
+BG color: 0
+BG threshold: 80
+Invert: FALSE
+Max intensity deviation: 40
+Max x angle: 1.1
+Max y angle: 1.1
+Max z angle: 0.5
+Show samples: TRUE
+Scale: 4
+Width: 24
+Height: 24
+Max Scale: -1
+RNG Seed: 12345
+Create training samples from images collection...
+Done. Created 600 samples
+

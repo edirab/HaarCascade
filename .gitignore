@@ -48,9 +48,11 @@ preparing data/extracted_images/without_800/*.jpg
 preparing navigation/videos/pyramid.mp4
 preparing navigation/extracted_images/with*/*.jpg
 preparing navigation/extracted_images/with_original/already_processed/*.jpg
+preparing navigation/extracted_images/with_original/already_processed_2/*.jpg
 preparing navigation/extracted_images/with_original/manually_filtering/*.jpg
 
 !preparing navigation/extracted_images/with*/pyramid0639.jpg
 !preparing navigation/extracted_images/with*/already_processed/pyramid0001.jpg
+!preparing navigation/extracted_images/with*/already_processed_2/pyramid0001.jpg
 
 !preparing navigation/*.exe
