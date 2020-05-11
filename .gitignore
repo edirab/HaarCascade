@@ -29,6 +29,9 @@ cuda/
 *.bak
 *.ini
 
+
+!OUTPUT.log
+
 # видео и изображения не нужны, однако
 # структуру каталогов сохраним
 preparing data/videos/*.mp4
