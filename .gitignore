@@ -13,11 +13,11 @@ preparing data/extracted_images/with/*.jpg
 preparing data/extracted_images/without/*.jpg
 preparing data/extracted_images/with_800/*.jpg
 preparing data/extracted_images/without_800/*.jpg
+preparing data/extracted_images/without_advanced/*.jpg
 
 !preparing data/*.exe
 
-
-preparing navigation/videos/pyramid.mp4
+preparing navigation/videos/*.mp4
 preparing navigation/false_positive_1/*.jpg
 preparing navigation/false_positive_2/*.jpg
 preparing navigation/extracted_images/with_800x450/*.jpg
@@ -27,26 +27,26 @@ preparing navigation/extracted_images/with_original/already_processed/*.jpg
 preparing navigation/extracted_images/with_original/already_processed_2/*.jpg
 preparing navigation/extracted_images/with_original/manually_filtering/*.jpg
 
+
+!preparing navigation/false_positive_1/1.jpg
 !preparing navigation/false_positive_2/1.jpg
 !preparing navigation/extracted_images/with*/pyramid0639.jpg
 !preparing navigation/extracted_images/with*/already_processed/pyramid0001.jpg
 !preparing navigation/extracted_images/with*/already_processed_2/pyramid0001.jpg
 !preparing navigation/*.exe
 
+!pyramid_test.mp4
 
 # Архивы
 *.zip
 
 # автоматически сгенерированные
 *.exe
-
 *.lik
 *.ilk
-
 *.pdb
 *.exp
 *.lib
-
 *.iobj
 *.ipdb
 *.idb
