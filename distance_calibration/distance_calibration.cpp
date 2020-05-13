@@ -17,6 +17,7 @@ String marker_2_name = "E:/University/10sem/nirs/haar_3_4_6/preparing navigation
 
 //void calculate(string path, int nominal_distance);
 
+
 void draw_objects(Mat &frame, vector<Rect> objects, Scalar color) {
 	
 	for (size_t i = 0; i < objects.size(); i++) {
@@ -26,6 +27,7 @@ void draw_objects(Mat &frame, vector<Rect> objects, Scalar color) {
 	}
 }
 
+
 void print_objects(vector<Rect> ob, string title = "Objects") {
 
 	for (int i = 0; i < ob.size(); i++) {
@@ -34,19 +36,48 @@ void print_objects(vector<Rect> ob, string title = "Objects") {
 	cout << "\n";
 }
 
+
 bool compar(Rect a, Rect b) {
 		return (a.width > b.width);
+}
+
+
+vector<Rect> filter_objects(vector<Rect> objects, Mat& currentFrame) {
+
+	vector<Rect> markers;
+	sort(objects.begin(), objects.end(), compar);
+
+	if (objects.size() >= 2) {
+		//Rect current, next;
+
+		for (size_t i = 0; i < objects.size() - 1; i++) {
+			Rect next_ = objects.at(i + 1);
+			Rect current = objects[i];
+			//Rect next_ = objects[i + 1];
+			
+
+			//if (abs(current.width - next.width) / current.width < 0.2) {
+			if ( (max(current.width, next_.width) - min(current.width, next_.width)) / max(current.width, next_.width) < 0.16) {
+				markers.push_back(current);
+				markers.push_back(next_);
+				break;
+			}
+		}
+	}
+	else if (objects.size() < 2) {
+		cout << "Объектов меньше двух! \n";
 	}
 
-void filter_objects(vector<Rect> objects) {
+	for (int i = 0; i < markers.size(); i++) {
+		Point center(markers[i].x + markers[i].width / 2, markers[i].y + markers[i].height / 2);
+		ellipse(currentFrame, center, Size(20, 20), 0, 0, 360, Scalar(0, 0, 255), 2);
+	}
 
-	sort(objects.begin(), objects.end(), compar);
-	/*
-	Дополнительная фильтрация будет добавлена вскоре
-	*/
-	print_objects(objects);
-	return;
+	//print_objects(objects);
+	print_objects(markers);
+	return markers;
 }
+
 
 double calculate(string path, string filename, int nominal_distance) {
 
@@ -78,15 +109,11 @@ double calculate(string path, string filename, int nominal_distance) {
 	draw_objects(frame, objs1, *color1);
 	draw_objects(frame, objs2, *color2);
 
-	namedWindow("Detected markers", WINDOW_NORMAL);
-	resizeWindow("Detected markers", 1280, 720);
-	imshow("Detected markers", frame);
+	objs1 = filter_objects(objs1, frame);
+	objs2 = filter_objects(objs2, frame);
 
-	filter_objects(objs1);
-	filter_objects(objs2);
 	//print_objects(objs1);
 	//print_objects(objs2);
-
 
 	delta_x_1 = abs(objs1[0].x - objs1[1].x);
 	delta_x_2 = abs(objs2[0].x - objs2[1].x);
@@ -106,6 +133,14 @@ double calculate(string path, string filename, int nominal_distance) {
 	cout << "Average: " << average << "\n\n";
 
 	//waitKey(0);
+
+	//namedWindow("Detected markers", WINDOW_NORMAL);
+	//resizeWindow("Detected markers", 1280, 720);
+	//imshow("Detected markers", frame);
+
+	namedWindow(filename, WINDOW_NORMAL);
+	resizeWindow(filename, 1280, 720);
+	imshow(filename, frame);
 	return average;
 }
 
@@ -122,21 +157,36 @@ int main() {
 	}
 
 	string path = "E:/University/10sem/nirs/haar_3_4_6/distance_calibration/images/50cm/";
-	//string name = "dist50cm01.jpg";
+	string path_2 = "E:/University/10sem/nirs/haar_3_4_6/distance_calibration/images/100cm/";
+	string name = "dist50cm04.jpg";
 
 	vector<double> average_50;
+	vector<double> average_100;
 
-	for (int i = 1; i < 5; i++) {
+	cout << calculate(path, name, 50);
+	waitKey(0);
+
+	/*
+	for (int i = 1; i < 6; i++) {
 		string name = "dist50cm0" + to_string(i) + ".jpg";
 		double temp = calculate(path, name, 50);
 		average_50.push_back(temp);
 	}
 
+	for (int i = 1; i < 5; i++) {
+		string name = "dist100cm0" + to_string(i) + ".jpg";
+		double temp = calculate(path_2, name, 100);
+		average_100.push_back(temp);
+	}
+
 	for (int j = 0; j < average_50.size(); j++)
 		cout << average_50[j] << "\n";
 
-	waitKey(0);
+	for (int j = 0; j < average_100.size(); j++)
+		cout << average_100[j] << "\n";
 
+	waitKey(0);
+	*/
 	return 0;
 }
 
