@@ -61,7 +61,24 @@ int main(int argc, const char** argv) {
 	}
 
 	int camera_device = parser.get<int>("camera");
-	VideoCapture capture(camera_device);
+	//VideoCapture capture(camera_device);
+	VideoCapture capture("E:/University/10sem/nirs/haar_3_4_6/preparing navigation/videos/pyramid_test.mp4");
+
+	Size S = Size((int)capture.get(CAP_PROP_FRAME_WIDTH), (int)capture.get(CAP_PROP_FRAME_HEIGHT));
+	
+
+	string abs_path = "E:/University/10sem/nirs/haar_3_4_6/preparing navigation/videos/pyramid_test_demo.mp4";
+	//VideoWriter video(abs_path, CV_FOURCC('M', 'J', 'P', 'G'), 30, Size(1280, 720));
+	VideoWriter video(abs_path, CV_FOURCC('M', 'P', '4', 'V'), 30, Size(1280, 720));
+
+	
+	//video.open(NAME, ex, inputVideo.get(CAP_PROP_FPS), S, true);
+
+
+	//E:\University\10sem\nirs\haar_3_4_6\preparing navigation\videos
+
+	//capture.set(CAP_PROP_FRAME_WIDTH, 1280); capture.set(CAP_PROP_FRAME_HEIGHT, 720);
+	//capture.set(CAP_PROP_FRAME_WIDTH, 1920); capture.set(CAP_PROP_FRAME_HEIGHT, 1080);
 
 	//-- 2. Read the video stream
 	//capture.open(camera_device);
@@ -98,6 +115,9 @@ int main(int argc, const char** argv) {
 		markers2 = filter_objects(markers2, frame, false);
 
 		rotate_over_normal(frame, markers1, markers2);
+		calculate_distance(frame, markers1, markers2, true);
+
+		video.write(frame);
 		imshow("Rotation ", frame);
 
 		if (cascadeCounter_1 != cascadeCounterPrev_1 || cascadeCounter_2 != cascadeCounterPrev_2) {
@@ -112,15 +132,13 @@ int main(int argc, const char** argv) {
 	}
 	// When everything done, release the video capture object
 	capture.release();
+	video.release();
 
 	// Closes all the frames
 	destroyAllWindows();
 	return 0;
 }
 
-void calculate_distance(Mat frame) {
-
-}
 
 
 /*

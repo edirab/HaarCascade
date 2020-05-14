@@ -14,5 +14,6 @@ void print_objects(vector<Rect> ob, string title);
 
 bool compar(Rect a, Rect b);
 vector<Rect> filter_objects(vector<Rect> objects, Mat& currentFrame, bool debug);
+void calculate_distance(Mat& frame, vector<Rect> m1, vector<Rect> m2, bool debug);
 
-void accumulate_false_pos(Mat frame);
+//void accumulate_false_pos(Mat frame);

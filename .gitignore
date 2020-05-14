@@ -6,19 +6,20 @@ cuda/
 
 trash.cpp
 
-!OUTPUT.log
 
-preparing data/videos/*.mp4
-preparing data/extracted_images/**/*.jpg
-preparing data/extracted_images/with/*.jpg
-preparing data/extracted_images/without/*.jpg
-preparing data/extracted_images/with_800/*.jpg
-preparing data/extracted_images/without_800/*.jpg
-preparing data/extracted_images/without_advanced/*.jpg
 
-!preparing data/*.exe
+preparing waiter/videos/*.mp4
+preparing waiter/extracted_images/**/*.jpg
+preparing waiter/extracted_images/with/*.jpg
+preparing waiter/extracted_images/without/*.jpg
+preparing waiter/extracted_images/with_800/*.jpg
+preparing waiter/extracted_images/without_800/*.jpg
+preparing waiter/extracted_images/without_advanced/*.jpg
+
+!preparing waiter/*.exe
 
 preparing navigation/videos/*.mp4
+preparing navigation/videos/*.avi
 preparing navigation/false_positive_1/*.jpg
 preparing navigation/false_positive_2/*.jpg
 preparing navigation/extracted_images/with_800x450/*.jpg
@@ -28,7 +29,6 @@ preparing navigation/extracted_images/with_original/already_processed/*.jpg
 preparing navigation/extracted_images/with_original/already_processed_2/*.jpg
 preparing navigation/extracted_images/with_original/manually_filtering/*.jpg
 
-
 !preparing navigation/false_positive_1/1.jpg
 !preparing navigation/false_positive_2/1.jpg
 !preparing navigation/extracted_images/with*/pyramid0639.jpg
@@ -37,6 +37,7 @@ preparing navigation/extracted_images/with_original/manually_filtering/*.jpg
 !preparing navigation/*.exe
 
 !pyramid_test.mp4
+!pyramid_test_demo.mp4
 
 # Архивы
 *.zip
@@ -60,3 +61,4 @@ preparing navigation/extracted_images/with_original/manually_filtering/*.jpg
 *.bak
 *.ini
 
+!OUTPUT.log

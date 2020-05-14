@@ -1,0 +1,48 @@
+E:\University\10sem\nirs\haar_3_4_6\preparing data>opencv_traincascade.exe -data haar_results_v8 -vec samples_33_36_v8.vec -bg bad.dat -numStages 16 -numThreads 12 -w 33 -h 36 -numPos 1500 -numNeg 2955 -mode ALL
+PARAMETERS:
+cascadeDirName: haar_results_v8
+vecFileName: samples_33_36_v8.vec
+bgFileName: bad.dat
+numPos: 1500
+numNeg: 2955
+numStages: 16
+precalcValBufSize[Mb] : 1024
+precalcIdxBufSize[Mb] : 1024
+acceptanceRatioBreakValue : -1
+stageType: BOOST
+featureType: HAAR
+sampleWidth: 33
+sampleHeight: 36
+boostType: GAB
+minHitRate: 0.995
+maxFalseAlarmRate: 0.5
+weightTrimRate: 0.95
+maxDepth: 1
+maxWeakCount: 100
+mode: ALL
+Number of unique features given windowSize [33,36] : 1121307
+
+===== TRAINING 0-stage =====
+<BEGIN
+POS count : consumed   1500 : 1500
+NEG count : acceptanceRatio    2955 : 1
+Precalculation time: 5.619
++----+---------+---------+
+|  N |    HR   |    FA   |
++----+---------+---------+
+|   1|        1|        1|
++----+---------+---------+
+|   2|        1|        1|
++----+---------+---------+
+|   3| 0.999333| 0.704907|
++----+---------+---------+
+|   4|    0.996| 0.496785|
++----+---------+---------+
+END>
+Training until now has taken 0 days 0 hours 25 minutes 12 seconds.
+
+===== TRAINING 1-stage =====
+<BEGIN
+OpenCV: terminate handler is called! The last OpenCV error is:
+OpenCV(3.4.6) Error: Bad argument (> Can not get new positive sample. The most possible reason is insufficient count of samples in given vec-file.
+> ) in CvCascadeImageReader::PosReader::get, file c:\build\3_4_winpack-build-win64-vc15\opencv\apps\traincascade\imagestorage.cpp, line 158
