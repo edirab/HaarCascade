@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <iostream>
 #include <algorithm>
+#include <cmath>
 
 using namespace std;
 using namespace cv;
@@ -46,18 +47,64 @@ vector<Rect> filter_objects(vector<Rect> objects, Mat& currentFrame) {
 
 	vector<Rect> markers;
 	sort(objects.begin(), objects.end(), compar);
+	print_objects(objects);
 
+	cout << "objects.size() = " << objects.size() << "\n";
 	if (objects.size() >= 2) {
-		//Rect current, next;
+		//Rect current, next_;
 
-		for (size_t i = 0; i < objects.size() - 1; i++) {
-			Rect next_ = objects.at(i + 1);
-			Rect current = objects[i];
-			//Rect next_ = objects[i + 1];
-			
+		for (size_t i = 0; i < (objects.size() - 1); i++) {
+			size_t j = i;
+			cout << "j = " << j << "\n";
+
+			/*
+			Variant #1
+
+			Rect next_ = objects[j + 1];
+			Rect current = objects[j];
+			*/
+
+			/*
+			Variant #2
+
+			current.width = objects[i].width;
+			current.height = objects[i].height;
+			current.x = objects[i].x;
+			current.y = objects[i].y;
+
+			next_.width = objects[i+1].width;
+			next_.height = objects[i+1].height;
+			next_.x = objects[i+1].x;
+			next_.y = objects[i+1].y;
+			*/
+
+			//Rect current(objects[i]);
+			//Rect next_(objects[i + 1]);
+
+			Rect current(objects[i].x, objects[i].y, objects[i].width, objects[i].height);
+			int ax = objects[i + 1].x;
+			int ay = objects[i + 1].y;
+			int aw = objects[i + 1].width;
+			int ah = objects[i + 1].height;
+
+			//cout << objects[i + 1].x << " " << objects[i + 1].y << " " << objects[i + 1].width << " " << objects[i + 1].height << "\n";
+			cout << ax << " " << ay << " " << aw << " " << ah << "\n";
+
+			//Rect next_(objects[i + 1].x, objects[i + 1].y, objects[i + 1].width, objects[i + 1].height);
+			Rect next_(ax, ay, aw, ah);
 
 			//if (abs(current.width - next.width) / current.width < 0.2) {
-			if ( (max(current.width, next_.width) - min(current.width, next_.width)) / max(current.width, next_.width) < 0.16) {
+			int max_width = max(current.width, next_.width);
+			int min_width = min(current.width, next_.width);
+
+			int delta = (max_width - min_width);
+			delta = abs(delta);
+			//cout << "delta" << delta << "\n";
+			//double diff = (delta / max_width);
+			double diff =  2/223;
+			cout << "delta = " << delta << " diff = " << diff << "\n";
+
+			if ( diff < 0.16) {
 				markers.push_back(current);
 				markers.push_back(next_);
 				break;
@@ -73,7 +120,7 @@ vector<Rect> filter_objects(vector<Rect> objects, Mat& currentFrame) {
 		ellipse(currentFrame, center, Size(20, 20), 0, 0, 360, Scalar(0, 0, 255), 2);
 	}
 
-	//print_objects(objects);
+	
 	print_objects(markers);
 	return markers;
 }
