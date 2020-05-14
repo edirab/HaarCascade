@@ -39,7 +39,7 @@ void print_objects(vector<Rect> ob, string title = "Objects") {
 
 
 bool compar(Rect a, Rect b) {
-		return (a.width > b.width);
+	return (a.width > b.width);
 }
 
 
@@ -47,68 +47,27 @@ vector<Rect> filter_objects(vector<Rect> objects, Mat& currentFrame) {
 
 	vector<Rect> markers;
 	sort(objects.begin(), objects.end(), compar);
-	print_objects(objects);
+	//print_objects(objects);
 
 	cout << "objects.size() = " << objects.size() << "\n";
 	if (objects.size() >= 2) {
-		//Rect current, next_;
 
-		for (size_t i = 0; i < (objects.size() - 1); i++) {
-			size_t j = i;
-			cout << "j = " << j << "\n";
+		for (size_t i = 0; i < objects.size() - 1; i++) {
 
-			/*
-			Variant #1
+			int max_width = max(objects[i].width, objects[i + 1].width);
+			int min_width = min(objects[i].width, objects[i + 1].width);
 
-			Rect next_ = objects[j + 1];
-			Rect current = objects[j];
-			*/
-
-			/*
-			Variant #2
-
-			current.width = objects[i].width;
-			current.height = objects[i].height;
-			current.x = objects[i].x;
-			current.y = objects[i].y;
-
-			next_.width = objects[i+1].width;
-			next_.height = objects[i+1].height;
-			next_.x = objects[i+1].x;
-			next_.y = objects[i+1].y;
-			*/
-
-			//Rect current(objects[i]);
-			//Rect next_(objects[i + 1]);
-
-			Rect current(objects[i].x, objects[i].y, objects[i].width, objects[i].height);
-			int ax = objects[i + 1].x;
-			int ay = objects[i + 1].y;
-			int aw = objects[i + 1].width;
-			int ah = objects[i + 1].height;
-
-			//cout << objects[i + 1].x << " " << objects[i + 1].y << " " << objects[i + 1].width << " " << objects[i + 1].height << "\n";
-			cout << ax << " " << ay << " " << aw << " " << ah << "\n";
-
-			//Rect next_(objects[i + 1].x, objects[i + 1].y, objects[i + 1].width, objects[i + 1].height);
-			Rect next_(ax, ay, aw, ah);
-
-			//if (abs(current.width - next.width) / current.width < 0.2) {
-			int max_width = max(current.width, next_.width);
-			int min_width = min(current.width, next_.width);
-
-			int delta = (max_width - min_width);
-			delta = abs(delta);
-			//cout << "delta" << delta << "\n";
-			//double diff = (delta / max_width);
-			double diff =  2/223;
+			int delta = max_width - min_width;
+			//delta = abs(delta);
+			double diff = double(delta)/ double(max_width);
 			cout << "delta = " << delta << " diff = " << diff << "\n";
 
-			if ( diff < 0.16) {
-				markers.push_back(current);
-				markers.push_back(next_);
+			if (diff < 0.16) {
+				markers.push_back(objects[i]);
+				markers.push_back(objects[i + 1]);
 				break;
 			}
+
 		}
 	}
 	else if (objects.size() < 2) {
@@ -117,9 +76,8 @@ vector<Rect> filter_objects(vector<Rect> objects, Mat& currentFrame) {
 
 	for (int i = 0; i < markers.size(); i++) {
 		Point center(markers[i].x + markers[i].width / 2, markers[i].y + markers[i].height / 2);
-		ellipse(currentFrame, center, Size(20, 20), 0, 0, 360, Scalar(0, 0, 255), 2);
+		ellipse(currentFrame, center, Size(10, 10), 0, 0, 360, Scalar(0, 0, 255), 4);
 	}
-
 	
 	print_objects(markers);
 	return markers;
@@ -210,10 +168,10 @@ int main() {
 	vector<double> average_50;
 	vector<double> average_100;
 
-	cout << calculate(path, name, 50);
-	waitKey(0);
+	//cout << calculate(path, name, 50);
+	//waitKey(0);
 
-	/*
+	
 	for (int i = 1; i < 6; i++) {
 		string name = "dist50cm0" + to_string(i) + ".jpg";
 		double temp = calculate(path, name, 50);
@@ -233,7 +191,7 @@ int main() {
 		cout << average_100[j] << "\n";
 
 	waitKey(0);
-	*/
+	
 	return 0;
 }
 

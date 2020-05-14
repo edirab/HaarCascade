@@ -4,6 +4,7 @@
 CUDA_*/
 cuda/
 
+trash.cpp
 
 !OUTPUT.log
 

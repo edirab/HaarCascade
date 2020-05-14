@@ -19,12 +19,14 @@
 #include "opencv2/imgproc.hpp"
 #include <iostream>
 #include <iomanip>
+#include "functions.h"
 
 using namespace std;
 using namespace cv;
 
 void detect_and_display(Mat frame, int CascadeNum, bool saveFalsePositive);
-void rotate_over_normal(Mat frame);
+void rotate_over_normal(Mat& frame, vector<Rect> m1, vector<Rect> m2);
+//void rotate_over_normal(Mat frame);
 
 CascadeClassifier model_cascade, model_cascade_2;
 int cascadeCounter_1 = 0, cascadeCounter_2 = 0;
@@ -33,11 +35,12 @@ int cascadeCounterPrev_1 = 0, cascadeCounterPrev_2 = 0;
 double alpha = 0;
 int false_positive_counter = 0;
 
+
 int main(int argc, const char** argv) {
 
 	CommandLineParser parser(argc, argv,
 		"{help h||}"
-		"{model_cascade|E:/University/10sem/nirs/haar_3_4_6/preparing navigation/haar_navigation_m1_v2/cascade.xml|Path to cascade No 1.}"
+		"{model_cascade|E:/University/10sem/nirs/haar_3_4_6/preparing navigation/haar_navigation_m1_v3/cascade.xml|Path to cascade No 1.}"
 		"{model_cascade_2|E:/University/10sem/nirs/haar_3_4_6/preparing navigation/haar_navigation_m2_v1/cascade.xml|Path to cascade No 2.}"
 		"{camera|0|Camera device number.}");
 	parser.about("\nThis program demonstrates using the cv::CascadeClassifier class to detect objects in a video stream.\n"
@@ -67,7 +70,7 @@ int main(int argc, const char** argv) {
 		cout << "--(!)Error opening video capture\n";
 		return -1;
 	}
-	Mat frame, frame_2;
+	Mat frame, frame_2, frame_gray;
 
 	while (1) {
 		capture.read(frame);
@@ -78,12 +81,24 @@ int main(int argc, const char** argv) {
 			break;
 		}
 		//imshow("Captured", frame);
-
 		//-- 3. Apply the classifier to the frame
 		//detect_and_display(frame, 1, true);
 		//detect_and_display(frame_2, 2);
 
-		rotate_over_normal(frame);
+		cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
+		equalizeHist(frame_gray, frame_gray);
+
+		vector<Rect> markers1, markers2;
+		//Scalar* color = new Scalar(0, 255, 255); // B G R
+
+		model_cascade.detectMultiScale(frame_gray, markers1);
+		model_cascade_2.detectMultiScale(frame_gray, markers2);
+
+		markers1 = filter_objects(markers1, frame, false);
+		markers2 = filter_objects(markers2, frame, false);
+
+		rotate_over_normal(frame, markers1, markers2);
+		imshow("Rotation ", frame);
 
 		if (cascadeCounter_1 != cascadeCounterPrev_1 || cascadeCounter_2 != cascadeCounterPrev_2) {
 			cout << setw(6) << cascadeCounter_1 << setw(6) << cascadeCounter_2 << "\n";
@@ -103,44 +118,39 @@ int main(int argc, const char** argv) {
 	return 0;
 }
 
+void calculate_distance(Mat frame) {
+
+}
+
 
 /*
 	Определяет наклон камеры по крену (ну почти) 
 	в диапазоне от -90 до +90 градусов
 */
-void rotate_over_normal(Mat frame) {
+void rotate_over_normal(Mat &frame, vector<Rect> m1, vector<Rect> m2) {
 
-	Mat frame_gray;
 	//double x1, x2 = 0;
 	//double y1, y2 = 0;
 
 	double delta_x, delta_y = 0;
-	
-	cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
-	equalizeHist(frame_gray, frame_gray);
 
-	vector<Rect> objs;
-	Scalar* color = new Scalar(0, 255, 255); // B G R
+	//Scalar* color = new Scalar(0, 255, 255); // B G R
 
 	//model_cascade.detectMultiScale(frame_gray, objs);
-	model_cascade_2.detectMultiScale(frame_gray, objs);
+	//model_cascade_2.detectMultiScale(frame_gray, objs);
 
-	for (size_t i = 0; i < objs.size(); i++) {
+	draw_objects(frame, m1, Scalar(0, 255, 255));
+	draw_objects(frame, m2, Scalar(255, 0, 255));
 
-		//cout << "X = " << objects[i].x << " Y = " << objects[i].y << "\n";
-		Point center(objs[i].x + objs[i].width / 2, objs[i].y + objs[i].height / 2);
-		ellipse(frame, center, Size(objs[i].width / 2, objs[i].height / 2), 0, 0, 360, *color, 2);
-	}
-
-	if (objs.size() == 2) {
+	if (m2.size() == 2) {
 
 		//PointA
-		delta_x = abs(objs[0].x - objs[1].x);
-		delta_y = abs(objs[0].y - objs[1].y);
+		delta_x = abs(m2[0].x - m2[1].x);
+		delta_y = abs(m2[0].y - m2[1].y);
 
 		//не известно, вкаком порядке детектируются точки: сначала левая, а потом правая, или наоборот
 		// Если ОДНА точка левее и выше, то считаем поворот по ч.с. со знаком "+"
-		if ((objs[0].x < objs[1].x && objs[0].y > objs[1].y) || (objs[1].x < objs[0].x && objs[1].y > objs[0].y)) {
+		if ((m2[0].x < m2[1].x && m2[0].y > m2[1].y) || (m2[1].x < m2[0].x && m2[1].y > m2[0].y)) {
 			alpha = atan(delta_y / delta_x);
 		}
 		else {
@@ -160,8 +170,8 @@ void rotate_over_normal(Mat frame) {
 
 	String text(str);
 
-	putText(frame, text, Point(10, 40), 0, 1.2, *color, 2);	
-	imshow("Rotation ", frame);
+	putText(frame, text, Point(10, 40), 0, 1.2, Scalar(255, 255, 0), 2);	
+	
 	return;
 }
 
@@ -170,7 +180,6 @@ void detect_and_display(Mat frame, int cascadeNum, bool saveFalsePositive = fals
 	//cout << "Inside detect_Display";
 
 	Mat frame_gray;
-	
 
 	cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
 	equalizeHist(frame_gray, frame_gray);
@@ -196,15 +205,7 @@ void detect_and_display(Mat frame, int cascadeNum, bool saveFalsePositive = fals
 		break;
 	}
 
-
-	for (size_t i = 0; i < objects.size(); i++) {
-
-		//cout << "X = " << objects[i].x << " Y = " << objects[i].y << "\n";
-		Point center(objects[i].x + objects[i].width / 2, objects[i].y + objects[i].height / 2);
-		ellipse(frame, center, Size(objects[i].width / 2, objects[i].height / 2), 0, 0, 360, *color, 2);
-
-		//Mat faceROI = frame_gray(objects[i]);
-	}
+	draw_objects(frame, objects, *color);
 
 	//-- Show what you got
 	switch (cascadeNum) {
