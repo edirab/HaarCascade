@@ -157,11 +157,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AUV.cpp" />
     <ClCompile Include="functions.cpp" />
     <ClCompile Include="haar_navigation.cpp" />
+    <ClCompile Include="Marker.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AUV.h" />
     <ClInclude Include="functions.h" />
+    <ClInclude Include="Marker.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
