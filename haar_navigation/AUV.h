@@ -18,6 +18,8 @@ class AUV {
 	int marker1Counter = 0, marker2Counter = 0;
 	int marker1Counter_prev = 0, marker2Counter_prev = 0;
 
+	Mat frame_gray;
+
 public:
 	double delta_x;
 	double delta_y;
@@ -27,11 +29,12 @@ public:
 	double d_pitch;
 	double d_roll;
 
-	AUV();
+	AUV(string, string);
 	~AUV ();
 
-	void get_orientation();
+	void get_orientation(Mat& frame);
 	void rotate_over_normal(Mat& frame, vector<Rect> m1, vector<Rect> m2);
-	void detect_and_display(Mat frame, int cascadeNum, bool saveFalsePositive = false);
+	void detect_and_display(Mat frame, int cascadeNum, bool saveFalsePositive);
+
 };
 

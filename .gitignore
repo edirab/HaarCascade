@@ -36,8 +36,8 @@ preparing navigation/extracted_images/with_original/manually_filtering/*.jpg
 !preparing navigation/extracted_images/with*/already_processed_2/pyramid0001.jpg
 !preparing navigation/*.exe
 
-!pyramid_test.mp4
-!pyramid_test_demo.mp4
+!/pyramid_test.mp4
+!/pyramid_test_demo.mp4
 
 # Архивы
 *.zip

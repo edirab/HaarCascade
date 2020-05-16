@@ -1,7 +1,17 @@
 #include "AUV.h"
 
-AUV::AUV() {
+AUV::AUV(string path1, string path2) {
 
+	marker_1_path = path1;
+	marker_2_path = path2;
+
+	//-- 1. Load the cascades
+	if (!marker_type_1.load(marker_1_path)) {
+		cout << "--(!)Error loading first cascade\n";
+	}
+	else if (!marker_type_2.load(marker_2_path)) {
+		cout << "--(!)Error loading second cascade\n";
+	}
 }
 
 AUV ::~AUV() {
@@ -60,4 +70,86 @@ void AUV::rotate_over_normal(Mat& frame, vector<Rect> m1, vector<Rect> m2) {
 	putText(frame, text, Point(10, 40), 0, 1.2, Scalar(255, 255, 0), 2);
 
 	return;
+}
+
+void AUV::detect_and_display(Mat frame, int cascadeNum, bool saveFalsePositive = false) {
+	//cout << "Inside detect_Display";
+
+	//Mat frame_gray;
+
+	//cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
+	//equalizeHist(frame_gray, frame_gray);
+
+	////imshow("Grayscale", frame_gray);
+
+	////-- Detect object
+	//std::vector<Rect> objects;
+	//Scalar* color = new Scalar(255, 0, 0);
+
+	//switch (cascadeNum) {
+
+	//case 1:
+	//	marker_type_1.detectMultiScale(frame_gray, objects);
+	//	color = new Scalar(255, 0, 255);
+	//	break;
+	//case 2:
+	//	marker_type_2.detectMultiScale(frame_gray, objects);
+	//	color = new Scalar(0, 255, 255);
+	//	break;
+	//default:
+	//	cout << "Error in switch-case detecting block \n";
+	//	break;
+	//}
+
+	//draw_objects(frame, objects, *color);
+
+	////-- Show what you got
+	//switch (cascadeNum) {
+
+	//case 1:
+	//	imshow("Markers #1 ", frame);
+	//	if (objects.size() == 2)
+	//		marker1Counter++;
+
+	//	if (objects.size() > 2 && saveFalsePositive) {
+	//		//string filename = "../../preparing navigation/false_positive_1/" + to_string(false_positive_counter++) + ".jpg";
+	//		string filename = "E:/University/10sem/nirs/haar_3_4_6/preparing navigation/false_positive_1/" + to_string(false_positive_counter++) + ".jpg";
+
+	//		imwrite(filename, frame);
+	//	}
+	//	break;
+	//case 2:
+	//	imshow("Marker #2", frame);
+	//	if (objects.size() == 2)
+	//		marker2Counter++;
+
+	//	if (objects.size() > 2 && saveFalsePositive) {
+	//		//string filename = "../../preparing navigation/false_positive_2/" + to_string(false_positive_counter++) + ".jpg";
+	//		string filename = "E:/University/10sem/nirs/haar_3_4_6/preparing navigation/false_positive_2/" + to_string(false_positive_counter++) + ".jpg";
+	//		imwrite(filename, frame);
+	//	}
+	//	break;
+	//default:
+	//	cout << "Error in switch-case showing block \n";
+	//	break;
+	//}
+	return;
+}
+
+void AUV::get_orientation(Mat &frame) {
+
+	cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
+	equalizeHist(frame_gray, frame_gray);
+
+	vector<Rect> markers1, markers2;
+	//Scalar* color = new Scalar(0, 255, 255); // B G R
+
+	marker_type_1.detectMultiScale(frame_gray, markers1);
+	marker_type_2.detectMultiScale(frame_gray, markers2);
+
+	markers1 = filter_objects(markers1, frame, false);
+	markers2 = filter_objects(markers2, frame, false);
+
+	rotate_over_normal(frame, markers1, markers2);
+	calculate_distance(frame, markers1, markers2, true);
 }

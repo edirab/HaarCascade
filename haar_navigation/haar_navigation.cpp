@@ -21,18 +21,12 @@
 #include <iomanip>
 #include "functions.h"
 
+#include "AUV.h"
+
 using namespace std;
 using namespace cv;
 
-void detect_and_display(Mat frame, int CascadeNum, bool saveFalsePositive);
-void rotate_over_normal(Mat& frame, vector<Rect> m1, vector<Rect> m2);
-//void rotate_over_normal(Mat frame);
 
-CascadeClassifier model_cascade, model_cascade_2;
-int cascadeCounter_1 = 0, cascadeCounter_2 = 0;
-int cascadeCounterPrev_1 = 0, cascadeCounterPrev_2 = 0;
-
-double alpha = 0;
 int false_positive_counter = 0;
 
 
@@ -50,83 +44,42 @@ int main(int argc, const char** argv) {
 	String model_cascade_name = parser.get<String>("model_cascade");
 	String model_cascade_name_2 = parser.get<String>("model_cascade_2");
 
-	//-- 1. Load the cascades
-	if (!model_cascade.load(model_cascade_name)) {
-		cout << "--(!)Error loading first cascade\n";
-		return -1;
-	}
-	else if (!model_cascade_2.load(model_cascade_name_2)) {
-		cout << "--(!)Error loading second cascade\n";
-		return -1;
-	}
+	AUV auv(model_cascade_name, model_cascade_name_2);
 
 	int camera_device = parser.get<int>("camera");
 	//VideoCapture capture(camera_device);
-	VideoCapture capture("E:/University/10sem/nirs/haar_3_4_6/preparing navigation/videos/pyramid_test.mp4");
+	VideoCapture capture("E:/University/10sem/nirs/haar_3_4_6/pyramid_test.mp4");
 
 	Size S = Size((int)capture.get(CAP_PROP_FRAME_WIDTH), (int)capture.get(CAP_PROP_FRAME_HEIGHT));
-	
-
 	string abs_path = "E:/University/10sem/nirs/haar_3_4_6/preparing navigation/videos/pyramid_test_demo.mp4";
+
 	//VideoWriter video(abs_path, CV_FOURCC('M', 'J', 'P', 'G'), 30, Size(1280, 720));
 	VideoWriter video(abs_path, CV_FOURCC('M', 'P', '4', 'V'), 30, Size(1280, 720));
 
 	
-	//video.open(NAME, ex, inputVideo.get(CAP_PROP_FPS), S, true);
-
-
-	//E:\University\10sem\nirs\haar_3_4_6\preparing navigation\videos
-
-	//capture.set(CAP_PROP_FRAME_WIDTH, 1280); capture.set(CAP_PROP_FRAME_HEIGHT, 720);
-	//capture.set(CAP_PROP_FRAME_WIDTH, 1920); capture.set(CAP_PROP_FRAME_HEIGHT, 1080);
-
-	//-- 2. Read the video stream
 	//capture.open(camera_device);
 
 	if (!capture.isOpened()) {
 		cout << "--(!)Error opening video capture\n";
 		return -1;
 	}
-	Mat frame, frame_2, frame_gray;
+	Mat frame;
 
 	while (1) {
 		capture.read(frame);
-		frame.copyTo(frame_2);
+		//frame.copyTo(frame_2);
 
-		if (frame.empty() || frame_2.empty()) {
+		if (frame.empty()) {
 			cout << "--(!) No captured frame -- Break!\n";
 			break;
 		}
-		//imshow("Captured", frame);
-		//-- 3. Apply the classifier to the frame
-		//detect_and_display(frame, 1, true);
-		//detect_and_display(frame_2, 2);
 
-		cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
-		equalizeHist(frame_gray, frame_gray);
+		auv.get_orientation(frame);
 
-		vector<Rect> markers1, markers2;
-		//Scalar* color = new Scalar(0, 255, 255); // B G R
-
-		model_cascade.detectMultiScale(frame_gray, markers1);
-		model_cascade_2.detectMultiScale(frame_gray, markers2);
-
-		markers1 = filter_objects(markers1, frame, false);
-		markers2 = filter_objects(markers2, frame, false);
-
-		rotate_over_normal(frame, markers1, markers2);
-		calculate_distance(frame, markers1, markers2, true);
+		imshow("Orientation ", frame);
 
 		//video.write(frame);
-		imshow("Rotation ", frame);
-
-		if (cascadeCounter_1 != cascadeCounterPrev_1 || cascadeCounter_2 != cascadeCounterPrev_2) {
-			cout << setw(6) << cascadeCounter_1 << setw(6) << cascadeCounter_2 << "\n";
-			cascadeCounterPrev_1 = cascadeCounter_1;
-			cascadeCounterPrev_2 = cascadeCounter_2;
-		}
-
-		// Press  ESC on keyboard to exit
+	
 		if (waitKey(25) == 27)
 			break;
 	}
@@ -137,76 +90,4 @@ int main(int argc, const char** argv) {
 	// Closes all the frames
 	destroyAllWindows();
 	return 0;
-}
-
-
-
-
-void rotate_over_normal(Mat &frame, vector<Rect> m1, vector<Rect> m2) {
-
-}
-
-
-void detect_and_display(Mat frame, int cascadeNum, bool saveFalsePositive = false) {
-	//cout << "Inside detect_Display";
-
-	Mat frame_gray;
-
-	cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
-	equalizeHist(frame_gray, frame_gray);
-
-	//imshow("Grayscale", frame_gray);
-
-	//-- Detect object
-	std::vector<Rect> objects;
-	Scalar *color = new Scalar(255, 0, 0);
-
-	switch (cascadeNum) {
-
-	case 1:
-		model_cascade.detectMultiScale(frame_gray, objects);
-		color = new Scalar(255, 0, 255);
-		break;
-	case 2:
-		model_cascade_2.detectMultiScale(frame_gray, objects);
-		color = new Scalar(0, 255, 255);
-		break;
-	default:
-		cout << "Error in switch-case detecting block \n";
-		break;
-	}
-
-	draw_objects(frame, objects, *color);
-
-	//-- Show what you got
-	switch (cascadeNum) {
-
-	case 1:
-		imshow("Markers #1 ", frame);
-		if (objects.size() == 2)
-			cascadeCounter_1++;
-
-		if (objects.size() > 2 && saveFalsePositive) {
-			//string filename = "../../preparing navigation/false_positive_1/" + to_string(false_positive_counter++) + ".jpg";
-			string filename = "E:/University/10sem/nirs/haar_3_4_6/preparing navigation/false_positive_1/" + to_string(false_positive_counter++) + ".jpg";
-
-			imwrite(filename, frame);
-		}
-		break;
-	case 2:
-		imshow("Marker #2", frame);
-		if (objects.size() == 2)
-			cascadeCounter_2++;
-
-		if (objects.size() > 2 && saveFalsePositive) {
-			//string filename = "../../preparing navigation/false_positive_2/" + to_string(false_positive_counter++) + ".jpg";
-			string filename = "E:/University/10sem/nirs/haar_3_4_6/preparing navigation/false_positive_2/" + to_string(false_positive_counter++) + ".jpg";
-			imwrite(filename, frame);
-		}
-		break;
-	default:
-		cout << "Error in switch-case showing block \n";
-		break;
-	}
-	return;
 }
