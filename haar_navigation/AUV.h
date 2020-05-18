@@ -35,6 +35,6 @@ public:
 	void get_orientation(Mat& frame);
 	void rotate_over_normal(Mat& frame, vector<Rect> m1, vector<Rect> m2);
 	void detect_and_display(Mat frame, int cascadeNum, bool saveFalsePositive);
-
+	void calculate_distance(Mat& frame, vector<Rect> m1, vector<Rect> m2, bool debug);
 };
 

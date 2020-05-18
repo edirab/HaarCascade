@@ -161,6 +161,7 @@
     <ClCompile Include="functions.cpp" />
     <ClCompile Include="haar_navigation.cpp" />
     <ClCompile Include="Marker.cpp" />
+    <ClCompile Include="trash.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AUV.h" />

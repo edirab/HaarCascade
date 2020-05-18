@@ -136,6 +136,31 @@ void AUV::detect_and_display(Mat frame, int cascadeNum, bool saveFalsePositive =
 	return;
 }
 
+void AUV::calculate_distance(Mat& frame, vector<Rect> m1, vector<Rect> m2, bool debug) {
+	double upper = 0, lower = 0;
+	if (m1.size() == 2) {
+		//Point a, b;
+		upper = sqrt(pow(abs(m1[0].x - m1[1].x), 2) + pow(abs(m1[0].y - m1[1].y), 2));
+	}
+
+	if (m2.size() == 2) {
+		lower = sqrt(pow(abs(m2[0].x - m2[1].x), 2) + pow(abs(m2[0].y - m2[1].y), 2));
+	}
+
+	if (debug) {
+		cout << "upper = " << upper << " lower = " << lower << "\n";
+
+		ostringstream strstream;
+		//strstream << setprecision(0);
+		strstream << "Dist px ";
+		strstream << setw(3) << int(upper) << " " << setw(3) << int(lower);
+
+		String text(strstream.str());
+		//putText(frame, text, Point(10, 400), 0, 1, Scalar(255, 255, 255), 2);
+		putText(frame, text, Point(10, 400), 0, 1, Scalar(30, 30, 30), 2);
+	}
+}
+
 void AUV::get_orientation(Mat &frame) {
 
 	cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
@@ -150,6 +175,6 @@ void AUV::get_orientation(Mat &frame) {
 	markers1 = filter_objects(markers1, frame, false);
 	markers2 = filter_objects(markers2, frame, false);
 
-	rotate_over_normal(frame, markers1, markers2);
-	calculate_distance(frame, markers1, markers2, true);
+	this->rotate_over_normal(frame, markers1, markers2);
+	this->calculate_distance(frame, markers1, markers2, true);
 }

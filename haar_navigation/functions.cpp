@@ -72,30 +72,7 @@ vector<Rect> filter_objects(vector<Rect> objects, Mat& currentFrame, bool debug 
 }
 
 
-void calculate_distance(Mat& frame, vector<Rect> m1, vector<Rect> m2, bool debug) {
-	double upper = 0, lower = 0;
-	if (m1.size() == 2) {
-		//Point a, b;
-		upper = sqrt(pow(abs(m1[0].x - m1[1].x), 2) + pow(abs(m1[0].y - m1[1].y), 2));
-	}
 
-	if (m2.size() == 2) {
-		lower = sqrt(pow(abs(m2[0].x - m2[1].x), 2) + pow(abs(m2[0].y - m2[1].y), 2));
-	}
-
-	if (debug) {
-		cout << "upper = " << upper << " lower = " << lower << "\n";
-
-		ostringstream strstream;
-		//strstream << setprecision(0);
-		strstream << "Dist px ";
-		strstream << setw(3) << int(upper) << " " << setw(3) << int(lower);
-
-		String text(strstream.str());
-		//putText(frame, text, Point(10, 400), 0, 1, Scalar(255, 255, 255), 2);
-		putText(frame, text, Point(10, 400), 0, 1, Scalar(30, 30, 30), 2);
-	}
-}
 
 void writeVideo(int frame_width, int frame_height) {
 	string abs_path = "E: / University / 10sem / nirs / haar_3_4_6 / preparing navigation / videos / pyramid_test_demo.avi";
