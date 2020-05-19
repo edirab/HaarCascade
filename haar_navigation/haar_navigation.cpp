@@ -14,14 +14,14 @@
 	Каскад /haar_navigation_m2_v1 обучен на вдвое меньшем количестве позитивных изображений
 */
 
+//#include <windows.h>
+#include "FPS.h"
+#include "AUV.h"
+
 #include "opencv2/objdetect.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
-#include <iostream>
-#include <iomanip>
 #include "functions.h"
-
-#include "AUV.h"
 
 using namespace std;
 using namespace cv;
@@ -37,17 +37,30 @@ int main(int argc, const char** argv) {
 		"{model_cascade|E:/University/10sem/nirs/haar_3_4_6/preparing navigation/haar_navigation_m1_v3/cascade.xml|Path to cascade No 1.}"
 		"{model_cascade_2|E:/University/10sem/nirs/haar_3_4_6/preparing navigation/haar_navigation_m2_v1/cascade.xml|Path to cascade No 2.}"
 		"{camera|0|Camera device number.}");
-	parser.about("\nThis program demonstrates using the cv::CascadeClassifier class to detect objects in a video stream.\n"
-		"You can use Haar or LBP features.\n\n");
+
 	parser.printMessage();
 
-	String model_cascade_name = parser.get<String>("model_cascade");
-	String model_cascade_name_2 = parser.get<String>("model_cascade_2");
+	bool use_LBP = false;
+
+	String model_cascade_name, model_cascade_name_2;
+	
+	if (use_LBP) {
+
+		model_cascade_name = "E:/University/10sem/nirs/haar_3_4_6/preparing navigation/haar_navigation_m1_v4/cascade.xml";
+		model_cascade_name_2 = "E:/University/10sem/nirs/haar_3_4_6/preparing navigation/haar_navigation_m2_v2/cascade.xml";
+	}
+	else {
+		model_cascade_name = parser.get<String>("model_cascade");
+		model_cascade_name_2  = parser.get<String>("model_cascade_2");
+	}
+
+
 
 	AUV auv(model_cascade_name, model_cascade_name_2);
 
 	int camera_device = parser.get<int>("camera");
 	//VideoCapture capture(camera_device);
+
 	VideoCapture capture("E:/University/10sem/nirs/haar_3_4_6/pyramid_test.mp4");
 
 	Size S = Size((int)capture.get(CAP_PROP_FRAME_WIDTH), (int)capture.get(CAP_PROP_FRAME_HEIGHT));
@@ -64,6 +77,7 @@ int main(int argc, const char** argv) {
 		return -1;
 	}
 	Mat frame;
+	int frameno = 0;
 
 	while (1) {
 		capture.read(frame);
@@ -75,6 +89,12 @@ int main(int argc, const char** argv) {
 		}
 
 		auv.get_orientation(frame);
+
+
+		double start = CLOCK();
+		double dur = CLOCK() - start;
+		printf("avg time per frame %f ms. fps %f. frameno = %d\n", avgdur(dur), avgfps(), frameno++);
+
 
 		imshow("Orientation ", frame);
 

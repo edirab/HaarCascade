@@ -1,0 +1,165 @@
+E:\University\10sem\nirs\haar_3_4_6\preparing navigation>opencv_createsamples.exe -info good_2_fixed.dat -vec samples_navigation_m2_v2.vec -num 912 -w 24 -h 24 -show
+Info file name: good_2_fixed.dat
+Img file name: (NULL)
+Vec file name: samples_navigation_m2_v2.vec
+BG  file name: (NULL)
+Num: 912
+BG color: 0
+BG threshold: 80
+Invert: FALSE
+Max intensity deviation: 40
+Max x angle: 1.1
+Max y angle: 1.1
+Max z angle: 0.5
+Show samples: TRUE
+Scale: 4
+Width: 24
+Height: 24
+Max Scale: -1
+RNG Seed: 12345
+Create training samples from images collection...
+Done. Created 912 samples
+
+E:\University\10sem\nirs\haar_3_4_6\preparing navigation>opencv_traincascade.exe -data haar_navigation_m2_v2 -vec samples_navigation_m2_v2.vec -bg bad_navigation_2.dat -featureType LBP -precalcValBufSize 2048 -precalcIdxBufSize 2048 -numStages 16 -numThreads 12 -w 24 -h 24 -numPos 800 -numNeg 4617
+PARAMETERS:
+cascadeDirName: haar_navigation_m2_v2
+vecFileName: samples_navigation_m2_v2.vec
+bgFileName: bad_navigation_2.dat
+numPos: 800
+numNeg: 4617
+numStages: 16
+precalcValBufSize[Mb] : 2048
+precalcIdxBufSize[Mb] : 2048
+acceptanceRatioBreakValue : -1
+stageType: BOOST
+featureType: LBP
+sampleWidth: 24
+sampleHeight: 24
+boostType: GAB
+minHitRate: 0.995
+maxFalseAlarmRate: 0.5
+weightTrimRate: 0.95
+maxDepth: 1
+maxWeakCount: 100
+Number of unique features given windowSize [24,24] : 8464
+
+===== TRAINING 0-stage =====
+<BEGIN
+POS count : consumed   800 : 800
+NEG count : acceptanceRatio    4617 : 1
+Precalculation time: 0.302
++----+---------+---------+
+|  N |    HR   |    FA   |
++----+---------+---------+
+|   1|        1|        1|
++----+---------+---------+
+|   2|        1|0.0405025|
++----+---------+---------+
+END>
+Training until now has taken 0 days 0 hours 0 minutes 1 seconds.
+
+===== TRAINING 1-stage =====
+<BEGIN
+POS count : consumed   800 : 800
+NEG count : acceptanceRatio    4617 : 0.0393113
+Precalculation time: 0.298
++----+---------+---------+
+|  N |    HR   |    FA   |
++----+---------+---------+
+|   1|        1|        1|
++----+---------+---------+
+|   2|        1| 0.137752|
++----+---------+---------+
+END>
+Training until now has taken 0 days 0 hours 0 minutes 9 seconds.
+
+===== TRAINING 2-stage =====
+<BEGIN
+POS count : consumed   800 : 800
+NEG count : acceptanceRatio    4617 : 0.00765236
+Precalculation time: 0.307
++----+---------+---------+
+|  N |    HR   |    FA   |
++----+---------+---------+
+|   1|        1|        1|
++----+---------+---------+
+|   2|        1|        1|
++----+---------+---------+
+|   3|  0.99875| 0.140351|
++----+---------+---------+
+END>
+Training until now has taken 0 days 0 hours 0 minutes 12 seconds.
+
+===== TRAINING 3-stage =====
+<BEGIN
+POS count : consumed   800 : 801
+NEG count : acceptanceRatio    4617 : 0.00124637
+Precalculation time: 0.33
++----+---------+---------+
+|  N |    HR   |    FA   |
++----+---------+---------+
+|   1|        1|        1|
++----+---------+---------+
+|   2|        1|        1|
++----+---------+---------+
+|   3|  0.99875| 0.209443|
++----+---------+---------+
+END>
+Training until now has taken 0 days 0 hours 0 minutes 20 seconds.
+
+===== TRAINING 4-stage =====
+<BEGIN
+POS count : consumed   800 : 802
+NEG count : acceptanceRatio    4617 : 0.000280968
+Precalculation time: 0.299
++----+---------+---------+
+|  N |    HR   |    FA   |
++----+---------+---------+
+|   1|        1|        1|
++----+---------+---------+
+|   2|        1|        1|
++----+---------+---------+
+|   3|  0.99875| 0.309942|
++----+---------+---------+
+END>
+Training until now has taken 0 days 0 hours 0 minutes 53 seconds.
+
+===== TRAINING 5-stage =====
+<BEGIN
+POS count : consumed   800 : 803
+NEG count : acceptanceRatio    4617 : 9.92786e-05
+Precalculation time: 0.308
++----+---------+---------+
+|  N |    HR   |    FA   |
++----+---------+---------+
+|   1|        1|        1|
++----+---------+---------+
+|   2|        1|        1|
++----+---------+---------+
+|   3|  0.99875| 0.372536|
++----+---------+---------+
+END>
+Training until now has taken 0 days 0 hours 2 minutes 6 seconds.
+
+===== TRAINING 6-stage =====
+<BEGIN
+POS count : consumed   800 : 804
+NEG count : acceptanceRatio    4617 : 3.84294e-05
+Precalculation time: 0.315
++----+---------+---------+
+|  N |    HR   |    FA   |
++----+---------+---------+
+|   1|        1|        1|
++----+---------+---------+
+|   2|        1|        1|
++----+---------+---------+
+|   3|   0.9975| 0.358241|
++----+---------+---------+
+END>
+Training until now has taken 0 days 0 hours 4 minutes 50 seconds.
+
+===== TRAINING 7-stage =====
+<BEGIN
+POS count : consumed   800 : 806
+NEG count : acceptanceRatio    1 : 7.62939e-06
+Required leaf false alarm rate achieved. Branch training terminated.

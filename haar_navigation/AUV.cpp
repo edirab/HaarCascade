@@ -36,8 +36,8 @@ void AUV::rotate_over_normal(Mat& frame, vector<Rect> m1, vector<Rect> m2) {
 	//model_cascade.detectMultiScale(frame_gray, objs);
 	//model_cascade_2.detectMultiScale(frame_gray, objs);
 
-	draw_objects(frame, m1, Scalar(0, 255, 255));
-	draw_objects(frame, m2, Scalar(255, 0, 255));
+	draw_objects(frame, m1, YEL);
+	draw_objects(frame, m2, PNK);
 
 	if (m2.size() == 2) {
 
@@ -172,8 +172,8 @@ void AUV::get_orientation(Mat &frame) {
 	marker_type_1.detectMultiScale(frame_gray, markers1);
 	marker_type_2.detectMultiScale(frame_gray, markers2);
 
-	markers1 = filter_objects(markers1, frame, false);
-	markers2 = filter_objects(markers2, frame, false);
+	markers1 = filter_objects(markers1, frame, frame_gray, false);
+	markers2 = filter_objects(markers2, frame, frame_gray, false);
 
 	this->rotate_over_normal(frame, markers1, markers2);
 	this->calculate_distance(frame, markers1, markers2, true);

@@ -8,7 +8,8 @@ void draw_objects(Mat& frame, vector<Rect> objects, Scalar color) {
 	for (size_t i = 0; i < objects.size(); i++) {
 		//cout << "X = " << objects[i].x << " Y = " << objects[i].y << "\n";
 		Point center(objects[i].x + objects[i].width / 2, objects[i].y + objects[i].height / 2);
-		ellipse(frame, center, Size(objects[i].width / 2, objects[i].height / 2), 0, 0, 360, color, 2);
+		//ellipse(frame, center, Size(objects[i].width / 2, objects[i].height / 2), 0, 0, 360, color, 2);
+		rectangle(frame, objects[i], color);
 	}
 }
 
@@ -29,7 +30,7 @@ bool compar(Rect a, Rect b) {
 	return (a.width > b.width);
 }
 
-vector<Rect> filter_objects(vector<Rect> objects, Mat& currentFrame, bool debug = false) {
+vector<Rect> filter_objects(vector<Rect> objects, Mat& currentFrame, Mat& frame_gray, bool debug = false) {
 
 	vector<Rect> markers;
 	sort(objects.begin(), objects.end(), compar);
@@ -39,6 +40,39 @@ vector<Rect> filter_objects(vector<Rect> objects, Mat& currentFrame, bool debug 
 		cout << "objects.size() = " << objects.size() << "\n";
 
 	if (objects.size() >= 2) {
+
+
+		vector<Vec3f> circles;
+		Mat roi;
+
+		for (int i = 0; i < objects.size(); i++) {
+
+			 roi= frame_gray(objects[i]);
+			
+
+			HoughCircles(roi, circles, HOUGH_GRADIENT, 1,
+			frame_gray.rows / 16,  // change this value to detect circles with different distances to each other
+			100, 30, 5, 30 // change the last two parameters
+			// (min_radius & max_radius) to detect larger circles
+			);
+
+		}
+
+		imshow("roi show", roi);
+
+
+		for (size_t i = 0; i < circles.size(); i++)
+		{
+			Vec3i c = circles[i];
+			Point center = Point(c[0], c[1]);
+			// circle center
+			//circle(currentFrame, center, 1, Scalar(0, 100, 100), 3, LINE_AA);
+			// circle outline
+			int radius = c[2];
+			circle(currentFrame, center, radius, RED, 2, LINE_AA);
+		}
+
+
 		for (size_t i = 0; i < objects.size() - 1; i++) {
 
 			int max_width = max(objects[i].width, objects[i + 1].width);

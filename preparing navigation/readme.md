@@ -33,6 +33,10 @@
      
             opencv_createsamples.exe -info good_2_fixed.dat -vec samples_navigation_m2_v1.vec -num 600 -w 24 -h 24 -show
 
+    - **haar_navigation_m2_v2:**
+     
+            opencv_createsamples.exe -info good_2_fixed.dat -vec samples_navigation_m2_v2.vec -num 912 -w 24 -h 24 -show
+
 3. Обучаем каскад командой
 
     - **haar_navigation_m1_v1:** 
@@ -56,7 +60,9 @@
     
             opencv_traincascade.exe -data haar_navigation_m2_v1 -vec samples_navigation_m2_v1.vec -bg bad_navigation.dat -numStages 16 -numThreads 12 -w 24 -h 24 -numPos 500 -numNeg 2955 -mode ALL
 
-
+    - **haar_navigation_m2_v2:** 
+    
+            opencv_traincascade.exe -data haar_navigation_m2_v2 -vec samples_navigation_m2_v2.vec -bg bad_navigation_2.dat -featureType LBP -precalcValBufSize 2048 -precalcIdxBufSize 2048 -numStages 16 -numThreads 12 -w 24 -h 24 -numPos 800 -numNeg 4617
 
 
 

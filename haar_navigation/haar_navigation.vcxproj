@@ -165,6 +165,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AUV.h" />
+    <ClInclude Include="FPS.h" />
     <ClInclude Include="functions.h" />
     <ClInclude Include="Marker.h" />
   </ItemGroup>
