@@ -34,3 +34,6 @@
 
 ![](./rotation.png)
 
+### О том, как высчитывать fps алгоритма
+
+https://stackoverflow.com/questions/22148826/measure-opencv-fps

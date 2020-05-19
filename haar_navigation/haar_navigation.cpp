@@ -16,12 +16,13 @@
 
 //#include <windows.h>
 #include "FPS.h"
+#include "Marker.h"
 #include "AUV.h"
+#include "functions.h"
 
 #include "opencv2/objdetect.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
-#include "functions.h"
 
 using namespace std;
 using namespace cv;
@@ -40,7 +41,7 @@ int main(int argc, const char** argv) {
 
 	parser.printMessage();
 
-	bool use_LBP = false;
+	bool use_LBP = true;
 
 	String model_cascade_name, model_cascade_name_2;
 	
@@ -67,7 +68,7 @@ int main(int argc, const char** argv) {
 	string abs_path = "E:/University/10sem/nirs/haar_3_4_6/preparing navigation/videos/pyramid_test_demo.mp4";
 
 	//VideoWriter video(abs_path, CV_FOURCC('M', 'J', 'P', 'G'), 30, Size(1280, 720));
-	VideoWriter video(abs_path, CV_FOURCC('M', 'P', '4', 'V'), 30, Size(1280, 720));
+	//VideoWriter video(abs_path, CV_FOURCC('M', 'P', '4', 'V'), 30, Size(1280, 720));
 
 	
 	//capture.open(camera_device);
@@ -79,6 +80,8 @@ int main(int argc, const char** argv) {
 	Mat frame;
 	int frameno = 0;
 
+
+
 	while (1) {
 		capture.read(frame);
 		//frame.copyTo(frame_2);
@@ -87,6 +90,18 @@ int main(int argc, const char** argv) {
 			cout << "--(!) No captured frame -- Break!\n";
 			break;
 		}
+
+
+		//Mat b = Mat::zeros(frame.rows, frame.cols, CV_8UC1);
+
+
+		//Mat c = Mat::zeros(50, 50, CV_8UC1);
+		////rectangle(c, Rect(5, 5, 45, 45))
+		//circle(c, Point(c.rows / 2, c.cols / 2), 0.40 * c.rows, WHT, -1);
+		//imshow("c", c);
+
+		//imshow("T1", Marker::get_template_t1(50, 50));
+		//imshow("T2", Marker::get_template_t2(50, 50));
 
 		auv.get_orientation(frame);
 
@@ -105,7 +120,7 @@ int main(int argc, const char** argv) {
 	}
 	// When everything done, release the video capture object
 	capture.release();
-	video.release();
+	//video.release();
 
 	// Closes all the frames
 	destroyAllWindows();

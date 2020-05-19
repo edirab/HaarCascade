@@ -1,5 +1,6 @@
 #include "functions.h"
 
+
 /*
 Отобразить объекты из вектора на изображении
 */
@@ -29,8 +30,12 @@ void print_objects(vector<Rect> ob, string title = "Objects") {
 bool compar(Rect a, Rect b) {
 	return (a.width > b.width);
 }
-
-vector<Rect> filter_objects(vector<Rect> objects, Mat& currentFrame, Mat& frame_gray, bool debug = false) {
+/*
+	Идея для фильтрации: не нужно никакое преобразование Хаффа, оно медленное
+	Можно воспользоваться априорной информацией о форме и типе маркеров:
+	Взять логическое "И" ака свёртку с шаблоном
+*/
+vector<Rect> filter_objects(vector<Rect> objects, Mat& currentFrame, Mat& frame_gray, int m_type, bool debug = false) {
 
 	vector<Rect> markers;
 	sort(objects.begin(), objects.end(), compar);
@@ -39,67 +44,92 @@ vector<Rect> filter_objects(vector<Rect> objects, Mat& currentFrame, Mat& frame_
 	if (debug)
 		cout << "objects.size() = " << objects.size() << "\n";
 
-	if (objects.size() >= 2) {
 
 
-		vector<Vec3f> circles;
-		Mat roi;
+	//vector<Vec3f> circles;
+	//Mat roi;
 
-		for (int i = 0; i < objects.size(); i++) {
+	//for (int i = 0; i < objects.size(); i++) {
 
-			 roi= frame_gray(objects[i]);
+	//	roi = frame_gray(objects[i]);
+	//		
+
+	//	HoughCircles(roi, circles, HOUGH_GRADIENT, 1,
+	//	frame_gray.rows / 16,  // change this value to detect circles with different distances to each other
+	//	100, 30, 5, 30 // change the last two parameters
+	//	// (min_radius & max_radius) to detect larger circles
+	//	);
+
+	//}
+
+	////imshow("roi show", roi);
+
+
+	//for (size_t i = 0; i < circles.size(); i++)
+	//{
+	//	Vec3i c = circles[i];
+	//	Point center = Point(c[0], c[1]);
+	//	// circle center
+	//	//circle(currentFrame, center, 1, Scalar(0, 100, 100), 3, LINE_AA);
+	//	// circle outline
+	//	int radius = c[2];
+	//	circle(currentFrame, center, radius, RED, 2, LINE_AA);
+	//}
+
+
+	for (size_t i = 0; i < objects.size() - 1; i++) {
+
+		int max_width = max(objects[i].width, objects[i + 1].width);
+		int min_width = min(objects[i].width, objects[i + 1].width);
+
+		int delta = max_width - min_width;
+		//delta = abs(delta);
+		double diff = double(delta) / double(max_width);
+
+		if(debug)
+			cout << "delta = " << delta << " diff = " << diff << "\n";
+
+		if (diff < 0.05) {
+
+			Mat roi1 = frame_gray(objects[i]);
+			//Mat roi2 = currentFrame(objects[i+1]);
+
 			
 
-			HoughCircles(roi, circles, HOUGH_GRADIENT, 1,
-			frame_gray.rows / 16,  // change this value to detect circles with different distances to each other
-			100, 30, 5, 30 // change the last two parameters
-			// (min_radius & max_radius) to detect larger circles
-			);
+			//Mat f1 = Mat::zeros(currentFrame.rows, currentFrame.cols, CV_8UC1);
+			//Mat f2 = Mat::zeros(currentFrame.rows, currentFrame.cols, CV_8UC1);
+			
 
-		}
-
-		imshow("roi show", roi);
-
-
-		for (size_t i = 0; i < circles.size(); i++)
-		{
-			Vec3i c = circles[i];
-			Point center = Point(c[0], c[1]);
-			// circle center
-			//circle(currentFrame, center, 1, Scalar(0, 100, 100), 3, LINE_AA);
-			// circle outline
-			int radius = c[2];
-			circle(currentFrame, center, radius, RED, 2, LINE_AA);
-		}
-
-
-		for (size_t i = 0; i < objects.size() - 1; i++) {
-
-			int max_width = max(objects[i].width, objects[i + 1].width);
-			int min_width = min(objects[i].width, objects[i + 1].width);
-
-			int delta = max_width - min_width;
-			//delta = abs(delta);
-			double diff = double(delta) / double(max_width);
-
-			if(debug)
-				cout << "delta = " << delta << " diff = " << diff << "\n";
-
-			if (diff < 0.16) {
-				markers.push_back(objects[i]);
-				markers.push_back(objects[i + 1]);
-				break;
+			if (m_type == 1) {
+				//roi1.copyTo(f1);
+				//imshow("roi1", f1);
+				Mat s;
+				subtract(Marker::get_template_t1(roi1.rows, roi1.cols), roi1, s);
+				int su = sum(s)[0];
+				cout << "Sum = " << su << "\n";
 			}
+			else {
+				//roi1.copyTo(f2);
+				//imshow("roi2", f2);
+				Mat s;
+				subtract(Marker::get_template_t2(roi1.rows, roi1.cols), roi1, s);
+				int su = sum(s)[0];
+				cout << "Sum = " << su << "\n";
+			}
+
+			markers.push_back(objects[i]);
+			markers.push_back(objects[i + 1]);
+			break;
 		}
 	}
-	else if (objects.size() < 2 && debug) {
-		cout << "Объектов меньше двух! \n";
-	}
+	
+
 
 	for (int i = 0; i < markers.size(); i++) {
 		Point center(markers[i].x + markers[i].width / 2, markers[i].y + markers[i].height / 2);
 		ellipse(currentFrame, center, Size(5, 5), 0, 0, 360, Scalar(0, 0, 255), 4);
 	}
+
 	if (debug)
 		print_objects(markers);
 	return markers;

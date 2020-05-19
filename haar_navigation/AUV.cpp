@@ -172,9 +172,9 @@ void AUV::get_orientation(Mat &frame) {
 	marker_type_1.detectMultiScale(frame_gray, markers1);
 	marker_type_2.detectMultiScale(frame_gray, markers2);
 
-	markers1 = filter_objects(markers1, frame, frame_gray, false);
-	markers2 = filter_objects(markers2, frame, frame_gray, false);
+	markers1 = filter_objects(markers1, frame, frame_gray, 1, false);
+	markers2 = filter_objects(markers2, frame, frame_gray, 2, false);
 
 	this->rotate_over_normal(frame, markers1, markers2);
-	this->calculate_distance(frame, markers1, markers2, true);
+	this->calculate_distance(frame, markers1, markers2, false);
 }
