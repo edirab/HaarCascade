@@ -20,6 +20,7 @@
 #include "AUV.h"
 #include "functions.h"
 
+
 #include "opencv2/objdetect.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
@@ -27,9 +28,7 @@
 using namespace std;
 using namespace cv;
 
-
 int false_positive_counter = 0;
-
 
 int main(int argc, const char** argv) {
 
@@ -42,6 +41,8 @@ int main(int argc, const char** argv) {
 	parser.printMessage();
 
 	bool use_LBP = true;
+	Mat frame;
+	int frameno = 0;
 
 	String model_cascade_name, model_cascade_name_2;
 	
@@ -55,9 +56,9 @@ int main(int argc, const char** argv) {
 		model_cascade_name_2  = parser.get<String>("model_cascade_2");
 	}
 
-
-
 	AUV auv(model_cascade_name, model_cascade_name_2);
+
+	
 
 	int camera_device = parser.get<int>("camera");
 	//VideoCapture capture(camera_device);
@@ -77,9 +78,6 @@ int main(int argc, const char** argv) {
 		cout << "--(!)Error opening video capture\n";
 		return -1;
 	}
-	Mat frame;
-	int frameno = 0;
-
 
 
 	while (1) {
@@ -91,24 +89,14 @@ int main(int argc, const char** argv) {
 			break;
 		}
 
-
-		//Mat b = Mat::zeros(frame.rows, frame.cols, CV_8UC1);
-
-
-		//Mat c = Mat::zeros(50, 50, CV_8UC1);
-		////rectangle(c, Rect(5, 5, 45, 45))
-		//circle(c, Point(c.rows / 2, c.cols / 2), 0.40 * c.rows, WHT, -1);
-		//imshow("c", c);
-
 		//imshow("T1", Marker::get_template_t1(50, 50));
 		//imshow("T2", Marker::get_template_t2(50, 50));
 
 		auv.get_orientation(frame);
 
-
 		double start = CLOCK();
 		double dur = CLOCK() - start;
-		printf("avg time per frame %f ms. fps %f. frameno = %d\n", avgdur(dur), avgfps(), frameno++);
+		//printf("avg time per frame %f ms. fps %f. frameno = %d\n", avgdur(dur), avgfps(), frameno++);
 
 
 		imshow("Orientation ", frame);
@@ -118,11 +106,9 @@ int main(int argc, const char** argv) {
 		if (waitKey(25) == 27)
 			break;
 	}
-	// When everything done, release the video capture object
 	capture.release();
 	//video.release();
 
-	// Closes all the frames
 	destroyAllWindows();
 	return 0;
 }

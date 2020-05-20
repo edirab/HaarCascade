@@ -12,10 +12,16 @@ AUV::AUV(string path1, string path2) {
 	else if (!marker_type_2.load(marker_2_path)) {
 		cout << "--(!)Error loading second cascade\n";
 	}
+	fout.open("E:/University/10sem/nirs/haar_3_4_6/haar_navigation/filtering_output.dat");
+
+	if (!fout) {
+		cout << "Error opening fout \n";
+	}
 }
 
 AUV ::~AUV() {
-
+	fout.flush();
+	fout.close();
 }
 
 
@@ -25,19 +31,8 @@ AUV ::~AUV() {
 */
 void AUV::rotate_over_normal(Mat& frame, vector<Rect> m1, vector<Rect> m2) {
 
-	//double x1, x2 = 0;
-	//double y1, y2 = 0;
-
 	double delta_x, delta_y = 0;
 	double alpha = 0;
-
-	//Scalar* color = new Scalar(0, 255, 255); // B G R
-
-	//model_cascade.detectMultiScale(frame_gray, objs);
-	//model_cascade_2.detectMultiScale(frame_gray, objs);
-
-	draw_objects(frame, m1, YEL);
-	draw_objects(frame, m2, PNK);
 
 	if (m2.size() == 2) {
 
@@ -161,6 +156,127 @@ void AUV::calculate_distance(Mat& frame, vector<Rect> m1, vector<Rect> m2, bool 
 	}
 }
 
+vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat& frame_gray, int m_type, bool debug = false) {
+
+	vector<Rect> markers_;
+	vector<Rect> hough_valid;
+	Mat roi;
+
+	sort(objects.begin(), objects.end(), compar);
+	//print_objects(objects);
+
+	if (debug)
+		cout << "objects.size() = " << objects.size() << "\n";
+
+	for (int i = 0; i < objects.size(); i++) {
+
+		vector<Vec3f> circles;
+		roi = frame_gray(objects[i]);
+		medianBlur(roi, roi, 5);
+
+		/*
+		Ищем все кружочки внутри одного ROI
+		*/
+		HoughCircles(roi, circles, HOUGH_GRADIENT, 1,
+			frame_gray.rows / 16,  // change this value to detect circles with different distances to each other
+			100, 30, 0.25 * roi.rows, 0.50 * roi.rows // change the last two parameters
+			// (min_radius & max_radius) to detect larger circles
+		);
+
+		/*
+		Если каскад указал на объект и детектор Хаффа нашёл кружочек, то скорее всего, это то что нужно
+		*/
+		if (circles.size() == 1) {
+			hough_valid.push_back(objects[i]);
+		}
+		/*
+		В одном roi кружочков больше одного. Что странно
+		Этот блок практически ничего не делает. За всё тестовое видео сработала 4 раза
+		*/
+		else if (circles.size() > 1) {
+
+			Mat t;
+			if (m_type == 1) {
+				t = Marker::get_template_t1(roi.rows, roi.cols);
+				absdiff(roi, t, roi);
+				int nonZero = countNonZero(roi);
+				//cout  << "m1 =" << setw(5) << nonZero << "\n";
+			}
+			else {
+				t = Marker::get_template_t1(roi.rows, roi.cols);
+				absdiff(roi, t, roi);
+				int nonZero = countNonZero(roi);
+				//cout  << " m2 ="<< setw(5) << nonZero << "\n";
+			}
+		}
+		/*
+		Ситуация: каскад утверждает, что есть объект, но детектор Хаффа кружочка не нашёл
+		вот здесь и можно проверить маской
+		*/
+		else {
+			Mat t;
+			
+
+			if (m_type == 1) {
+				t = Marker::get_template_t1(roi.rows, roi.cols);
+				threshold(roi, roi, 60, 255, THRESH_BINARY);
+				imshow("roi m1 thresholded", roi);
+
+				absdiff(roi, t, roi);
+				int nonZero = countNonZero(roi);
+				cout << "m1 = " << setw(7) << nonZero << "\n";
+				fout << "m1 = " << nonZero << "\n";
+			}
+			else {
+				t = Marker::get_template_t1(roi.rows, roi.cols);
+				threshold(roi, roi, 200, 255, THRESH_BINARY);
+				imshow("roi m2 thresholded", roi);
+
+				absdiff(roi, t, roi);
+				int nonZero = countNonZero(roi);
+				cout << "m2 = " << setw(7) << nonZero << "\n";
+				fout << "m2 = " << nonZero << "\n";
+			}
+		}
+		// конец проверки маской
+	}
+
+	if (hough_valid.size() > 2) {
+		for (size_t i = 0; i < hough_valid.size() - 1; i++) {
+
+			int max_width = max(hough_valid[i].width, hough_valid[i + 1].width);
+			int min_width = min(hough_valid[i].width, hough_valid[i + 1].width);
+
+			int delta = max_width - min_width;
+			//delta = abs(delta);
+			double diff = double(delta) / double(max_width);
+
+			if (debug)
+				cout << "delta = " << delta << " diff = " << diff << "\n";
+
+			if (diff < 0.05) {
+
+				markers_.push_back(hough_valid[i]);
+				markers_.push_back(hough_valid[i + 1]);
+				break;
+			}
+		}
+	}
+	else {
+		markers_ = hough_valid;
+	}
+
+	for (int i = 0; i < markers_.size(); i++) {
+		Point center(markers_[i].x + markers_[i].width / 2, markers_[i].y + markers_[i].height / 2);
+		ellipse(currentFrame, center, Size(5, 5), 0, 0, 360, Scalar(0, 0, 255), 4);
+	}
+
+	if (debug)
+		//print_objects(markers);
+	return markers_;
+}
+
+
 void AUV::get_orientation(Mat &frame) {
 
 	cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
@@ -172,8 +288,11 @@ void AUV::get_orientation(Mat &frame) {
 	marker_type_1.detectMultiScale(frame_gray, markers1);
 	marker_type_2.detectMultiScale(frame_gray, markers2);
 
-	markers1 = filter_objects(markers1, frame, frame_gray, 1, false);
-	markers2 = filter_objects(markers2, frame, frame_gray, 2, false);
+	vector<Rect> markers1_filtered = filter_objects_2(markers1, frame, frame_gray, 1, false);
+	vector<Rect> markers2_filtered = filter_objects_2(markers2, frame, frame_gray, 2, false);
+
+	draw_objects(frame, markers1_filtered, YEL);
+	draw_objects(frame, markers2_filtered, PNK);
 
 	this->rotate_over_normal(frame, markers1, markers2);
 	this->calculate_distance(frame, markers1, markers2, false);

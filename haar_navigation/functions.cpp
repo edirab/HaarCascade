@@ -136,8 +136,6 @@ vector<Rect> filter_objects(vector<Rect> objects, Mat& currentFrame, Mat& frame_
 }
 
 
-
-
 void writeVideo(int frame_width, int frame_height) {
 	string abs_path = "E: / University / 10sem / nirs / haar_3_4_6 / preparing navigation / videos / pyramid_test_demo.avi";
 	VideoWriter video(abs_path, CV_FOURCC('M', 'J', 'P', 'G'), 10, Size(frame_width, frame_height));

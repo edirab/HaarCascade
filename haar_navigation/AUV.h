@@ -1,6 +1,6 @@
 #pragma once
 
-
+#include <fstream>
 #include "opencv2/objdetect.hpp"
 #include "opencv2/imgproc.hpp"
 #include <opencv2/cudaobjdetect.hpp>
@@ -33,12 +33,17 @@ public:
 	double d_pitch;
 	double d_roll;
 
+	ofstream fout;
+
 	AUV(string, string);
 	~AUV ();
 
 	void get_orientation(Mat& frame);
+
 	void rotate_over_normal(Mat& frame, vector<Rect> m1, vector<Rect> m2);
 	void detect_and_display(Mat frame, int cascadeNum, bool saveFalsePositive);
 	void calculate_distance(Mat& frame, vector<Rect> m1, vector<Rect> m2, bool debug);
+
+	vector<Rect> filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat& frame_gray, int m_type, bool debug);
 };
 
