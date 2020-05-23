@@ -79,15 +79,16 @@ int main(int argc, const char** argv) {
 		return -1;
 	}
 
+	frame = imread("E:/University/10sem/nirs/haar_3_4_6/preparing navigation/test/2.jpg");
 
-	while (1) {
-		capture.read(frame);
+	//while (1) {
+		//capture.read(frame);
 		//frame.copyTo(frame_2);
 
-		if (frame.empty()) {
-			cout << "--(!) No captured frame -- Break!\n";
-			break;
-		}
+		//if (frame.empty()) {
+		//	cout << "--(!) No captured frame -- Break!\n";
+		//	break;
+		//}
 
 		//imshow("T1", Marker::get_template_t1(50, 50));
 		//imshow("T2", Marker::get_template_t2(50, 50));
@@ -98,14 +99,17 @@ int main(int argc, const char** argv) {
 		double dur = CLOCK() - start;
 		//printf("avg time per frame %f ms. fps %f. frameno = %d\n", avgdur(dur), avgfps(), frameno++);
 
-
-		imshow("Orientation ", frame);
-
+		//namedWindow("Orientation", WINDOW_NORMAL);
+		//resizeWindow("Orientation", 1280, int( frame.rows/(frame.cols/1280)));
+		//resizeWindow("Orientation", 1280, 891);
+		imshow("Orientation", frame);
+		waitKey(0);
 		//video.write(frame);
 	
-		if (waitKey(25) == 27)
-			break;
-	}
+
+		//if (waitKey(25) == 27)
+		//	break;
+	//}
 	capture.release();
 	//video.release();
 

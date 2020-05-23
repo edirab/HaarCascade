@@ -5,7 +5,9 @@ CUDA_*/
 cuda/
 
 trash.cpp
+~*
 
+test/
 
 
 preparing waiter/videos/*.mp4

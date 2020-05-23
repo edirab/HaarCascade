@@ -53,16 +53,16 @@ void AUV::rotate_over_normal(Mat& frame, vector<Rect> m1, vector<Rect> m2) {
 
 	ostringstream strstream;
 	strstream << setprecision(2);
-	strstream << "Rotation over ";
+	strstream << "rotation: ";
 	strstream << degs;
-	strstream << "degs";
+	strstream << " deg";
 
 	string str = strstream.str();
 	//string str = "Rotation over " + to_string(degs) + "degs";
 
 	String text(str);
 
-	putText(frame, text, Point(10, 40), 0, 1.2, Scalar(255, 255, 0), 2);
+	putText(frame, text, Point(100, 440), 0, 1, BLK, 2);
 
 	return;
 }
@@ -144,16 +144,20 @@ void AUV::calculate_distance(Mat& frame, vector<Rect> m1, vector<Rect> m2, bool 
 
 	if (debug) {
 		cout << "upper = " << upper << " lower = " << lower << "\n";
-
-		ostringstream strstream;
-		//strstream << setprecision(0);
-		strstream << "Dist px ";
-		strstream << setw(3) << int(upper) << " " << setw(3) << int(lower);
-
-		String text(strstream.str());
-		//putText(frame, text, Point(10, 400), 0, 1, Scalar(255, 255, 255), 2);
-		putText(frame, text, Point(10, 400), 0, 1, Scalar(30, 30, 30), 2);
 	}
+
+	int w = frame.cols;
+	float scale = float(w) / 640;
+
+	ostringstream strstream;
+	//strstream << setprecision(0);
+	strstream << "d, cm: ";
+	strstream << setw(3) << int(50 * 100 / (upper / scale));// << " " << setw(3) << int(lower);
+
+	String text(strstream.str());
+	//putText(frame, text, Point(10, 400), 0, 1, Scalar(255, 255, 255), 2);
+	putText(frame, text, Point(100, 500), 0, 1, BLK, 2);
+	
 }
 
 vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat& frame_gray, int m_type, bool debug = false) {
@@ -295,5 +299,5 @@ void AUV::get_orientation(Mat &frame) {
 	draw_objects(frame, markers2_filtered, PNK);
 
 	this->rotate_over_normal(frame, markers1, markers2);
-	this->calculate_distance(frame, markers1, markers2, false);
+	this->calculate_distance(frame, markers1, markers2, true);
 }
