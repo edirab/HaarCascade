@@ -29,11 +29,17 @@ public:
 	double delta_y;
 	double delta_z;
 
+	double upper;
+	double lower;
+	double dist; //aka наклонная дальность
+
 	double d_yaw;
 	double d_pitch;
 	double d_roll;
 
+	// debug purposes
 	ofstream fout;
+	//Mat AUV_sees;
 
 	AUV(string, string);
 	~AUV ();
@@ -43,7 +49,8 @@ public:
 	void rotate_over_normal(Mat& frame, vector<Rect> m1, vector<Rect> m2);
 	void detect_and_display(Mat frame, int cascadeNum, bool saveFalsePositive);
 	void calculate_distance(Mat& frame, vector<Rect> m1, vector<Rect> m2, bool debug);
+	void calculate_deltas(Mat& frame, vector<Rect> m1, vector<Rect> m2, bool debug);
 
-	vector<Rect> filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat& frame_gray, int m_type, bool debug);
+	vector<Rect> filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat& frame_gray, int m_type, Mat AUV_sees, bool debug);
 };
 

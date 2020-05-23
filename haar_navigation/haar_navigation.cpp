@@ -41,11 +41,15 @@ int main(int argc, const char** argv) {
 	parser.printMessage();
 
 	bool use_LBP = true;
-	Mat frame;
-	int frameno = 0;
+	bool use_video = false;
 
-	String model_cascade_name, model_cascade_name_2;
+	int camera_device = parser.get<int>("camera");
+	int frameno = 0;
+	Mat frame;
 	
+	String model_cascade_name, model_cascade_name_2;
+	VideoCapture capture;
+
 	if (use_LBP) {
 
 		model_cascade_name = "E:/University/10sem/nirs/haar_3_4_6/preparing navigation/haar_navigation_m1_v4/cascade.xml";
@@ -56,39 +60,45 @@ int main(int argc, const char** argv) {
 		model_cascade_name_2  = parser.get<String>("model_cascade_2");
 	}
 
-	AUV auv(model_cascade_name, model_cascade_name_2);
-
-	
-
-	int camera_device = parser.get<int>("camera");
-	//VideoCapture capture(camera_device);
-
-	VideoCapture capture("E:/University/10sem/nirs/haar_3_4_6/pyramid_test.mp4");
-
-	Size S = Size((int)capture.get(CAP_PROP_FRAME_WIDTH), (int)capture.get(CAP_PROP_FRAME_HEIGHT));
-	string abs_path = "E:/University/10sem/nirs/haar_3_4_6/preparing navigation/videos/pyramid_test_demo.mp4";
-
-	//VideoWriter video(abs_path, CV_FOURCC('M', 'J', 'P', 'G'), 30, Size(1280, 720));
-	//VideoWriter video(abs_path, CV_FOURCC('M', 'P', '4', 'V'), 30, Size(1280, 720));
-
-	
-	//capture.open(camera_device);
+	/*
+	Инициализация камеры
+	*/
+	if (!use_video){
+		capture.open(camera_device);
+	}
+	else {
+		capture.open("E:/University/10sem/nirs/haar_3_4_6/pyramid_test.mp4");
+	}
 
 	if (!capture.isOpened()) {
 		cout << "--(!)Error opening video capture\n";
 		return -1;
 	}
 
-	frame = imread("E:/University/10sem/nirs/haar_3_4_6/preparing navigation/test/2.jpg");
 
-	//while (1) {
-		//capture.read(frame);
+	Size S = Size((int)capture.get(CAP_PROP_FRAME_WIDTH), (int)capture.get(CAP_PROP_FRAME_HEIGHT));
+
+	//string abs_path = "E:/University/10sem/nirs/haar_3_4_6/preparing navigation/videos/pyramid_test_demo.mp4";
+	//VideoWriter video(abs_path, CV_FOURCC('M', 'J', 'P', 'G'), 30, Size(1280, 720));
+	//VideoWriter video(abs_path, CV_FOURCC('M', 'P', '4', 'V'), 30, Size(1280, 720));
+
+	//frame = imread("E:/University/10sem/nirs/haar_3_4_6/preparing navigation/test/2.jpg");
+
+
+	AUV auv(model_cascade_name, model_cascade_name_2);
+
+	
+
+
+
+	while (1) {
+		capture.read(frame);
 		//frame.copyTo(frame_2);
 
-		//if (frame.empty()) {
-		//	cout << "--(!) No captured frame -- Break!\n";
-		//	break;
-		//}
+		if (frame.empty()) {
+			cout << "--(!) No captured frame -- Break!\n";
+			break;
+		}
 
 		//imshow("T1", Marker::get_template_t1(50, 50));
 		//imshow("T2", Marker::get_template_t2(50, 50));
@@ -103,13 +113,13 @@ int main(int argc, const char** argv) {
 		//resizeWindow("Orientation", 1280, int( frame.rows/(frame.cols/1280)));
 		//resizeWindow("Orientation", 1280, 891);
 		imshow("Orientation", frame);
-		waitKey(0);
+		//waitKey(0);
 		//video.write(frame);
 	
 
-		//if (waitKey(25) == 27)
-		//	break;
-	//}
+		if (waitKey(25) == 27)
+			break;
+	}
 	capture.release();
 	//video.release();
 

@@ -20,6 +20,8 @@ AUV::AUV(string path1, string path2) {
 }
 
 AUV ::~AUV() {
+	
+
 	fout.flush();
 	fout.close();
 }
@@ -31,8 +33,9 @@ AUV ::~AUV() {
 */
 void AUV::rotate_over_normal(Mat& frame, vector<Rect> m1, vector<Rect> m2) {
 
-	double delta_x, delta_y = 0;
-	double alpha = 0;
+	static double delta_x = 0;
+	static double delta_y = 0;
+	static double alpha = 0;
 
 	if (m2.size() == 2) {
 
@@ -40,7 +43,7 @@ void AUV::rotate_over_normal(Mat& frame, vector<Rect> m1, vector<Rect> m2) {
 		delta_x = abs(m2[0].x - m2[1].x);
 		delta_y = abs(m2[0].y - m2[1].y);
 
-		//не известно, вкаком порядке детектируются точки: сначала левая, а потом правая, или наоборот
+		//не известно, в каком порядке детектируются точки: сначала левая, а потом правая, или наоборот
 		// Если ОДНА точка левее и выше, то считаем поворот по ч.с. со знаком "+"
 		if ((m2[0].x < m2[1].x && m2[0].y > m2[1].y) || (m2[1].x < m2[0].x && m2[1].y > m2[0].y)) {
 			alpha = atan(delta_y / delta_x);
@@ -49,20 +52,22 @@ void AUV::rotate_over_normal(Mat& frame, vector<Rect> m1, vector<Rect> m2) {
 			alpha = -atan(delta_y / delta_x);
 		}
 	}
-	double degs = alpha * 180 / 3.1415926535;
+
+	if (abs(alpha) >= 0 && abs(alpha) < 2 * 3.1415926535) {
+		this->d_roll = alpha * 180 / 3.1415926535;
+	}
 
 	ostringstream strstream;
 	strstream << setprecision(2);
 	strstream << "rotation: ";
-	strstream << degs;
+	strstream << this->d_roll;
 	strstream << " deg";
 
-	string str = strstream.str();
 	//string str = "Rotation over " + to_string(degs) + "degs";
 
-	String text(str);
-
-	putText(frame, text, Point(100, 440), 0, 1, BLK, 2);
+	String text(strstream.str());
+	int text_y = int(frame.rows * 0.6);
+	putText(frame, text, Point(100, text_y), 0, 1, BLK, 2);
 
 	return;
 }
@@ -132,7 +137,7 @@ void AUV::detect_and_display(Mat frame, int cascadeNum, bool saveFalsePositive =
 }
 
 void AUV::calculate_distance(Mat& frame, vector<Rect> m1, vector<Rect> m2, bool debug) {
-	double upper = 0, lower = 0;
+	
 	if (m1.size() == 2) {
 		//Point a, b;
 		upper = sqrt(pow(abs(m1[0].x - m1[1].x), 2) + pow(abs(m1[0].y - m1[1].y), 2));
@@ -149,18 +154,30 @@ void AUV::calculate_distance(Mat& frame, vector<Rect> m1, vector<Rect> m2, bool 
 	int w = frame.cols;
 	float scale = float(w) / 640;
 
+	double average = (upper + lower) / 2;
+	double calculated_distance = 50 * 100 / (average / scale);
+
+	if (calculated_distance > 0 && calculated_distance <= 200)
+		this->dist = calculated_distance;
+
 	ostringstream strstream;
 	//strstream << setprecision(0);
 	strstream << "d, cm: ";
-	strstream << setw(3) << int(50 * 100 / (upper / scale));// << " " << setw(3) << int(lower);
+	strstream << setw(3) << int(dist);// << " " << setw(3) << int(lower);
 
 	String text(strstream.str());
 	//putText(frame, text, Point(10, 400), 0, 1, Scalar(255, 255, 255), 2);
-	putText(frame, text, Point(100, 500), 0, 1, BLK, 2);
-	
+	int text_y = int(frame.rows * 0.5);
+	putText(frame, text, Point(100, text_y), 0, 1, BLK, 2);	
 }
 
-vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat& frame_gray, int m_type, bool debug = false) {
+
+void AUV::calculate_deltas(Mat& frame, vector<Rect> m1, vector<Rect> m2, bool debug) {
+
+	return;
+}
+
+vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat& frame_gray, int m_type, Mat AUV_sees, bool debug = false) {
 
 	vector<Rect> markers_;
 	vector<Rect> hough_valid;
@@ -172,6 +189,7 @@ vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat&
 	if (debug)
 		cout << "objects.size() = " << objects.size() << "\n";
 
+	// всё делается за один проход
 	for (int i = 0; i < objects.size(); i++) {
 
 		vector<Vec3f> circles;
@@ -195,7 +213,7 @@ vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat&
 		}
 		/*
 		В одном roi кружочков больше одного. Что странно
-		Этот блок практически ничего не делает. За всё тестовое видео сработала 4 раза
+		Этот блок практически ничего не делает. За всё тестовое видео сработал 4 раза
 		*/
 		else if (circles.size() > 1) {
 
@@ -224,22 +242,22 @@ vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat&
 			if (m_type == 1) {
 				t = Marker::get_template_t1(roi.rows, roi.cols);
 				threshold(roi, roi, 60, 255, THRESH_BINARY);
-				imshow("roi m1 thresholded", roi);
+				//imshow("roi m1 thresholded", roi);
 
 				absdiff(roi, t, roi);
 				int nonZero = countNonZero(roi);
-				cout << "m1 = " << setw(7) << nonZero << "\n";
-				fout << "m1 = " << nonZero << "\n";
+				//cout << "m1 = " << setw(7) << nonZero << "\n";
+				//fout << "m1 = " << nonZero << "\n";
 			}
 			else {
 				t = Marker::get_template_t1(roi.rows, roi.cols);
 				threshold(roi, roi, 200, 255, THRESH_BINARY);
-				imshow("roi m2 thresholded", roi);
+				//imshow("roi m2 thresholded", roi);
 
 				absdiff(roi, t, roi);
 				int nonZero = countNonZero(roi);
-				cout << "m2 = " << setw(7) << nonZero << "\n";
-				fout << "m2 = " << nonZero << "\n";
+				//cout << "m2 = " << setw(7) << nonZero << "\n";
+				//fout << "m2 = " << nonZero << "\n";
 			}
 		}
 		// конец проверки маской
@@ -292,11 +310,28 @@ void AUV::get_orientation(Mat &frame) {
 	marker_type_1.detectMultiScale(frame_gray, markers1);
 	marker_type_2.detectMultiScale(frame_gray, markers2);
 
-	vector<Rect> markers1_filtered = filter_objects_2(markers1, frame, frame_gray, 1, false);
-	vector<Rect> markers2_filtered = filter_objects_2(markers2, frame, frame_gray, 2, false);
+	static Mat AUV_sees = Mat::zeros(frame.size(), CV_8UC1);
+
+	vector<Rect> markers1_filtered = filter_objects_2(markers1, frame, frame_gray, 1, AUV_sees, false);
+	vector<Rect> markers2_filtered = filter_objects_2(markers2, frame, frame_gray, 2, AUV_sees, false);
+
+	AUV_sees = Mat::zeros(frame.size(), CV_8UC1);
+
+	for (int i = 0; i < markers1_filtered.size(); i++) {
+		rectangle(AUV_sees, markers1_filtered[i], WHT, -1);
+	}
+	for (int i = 0; i < markers2_filtered.size(); i++) {
+		rectangle(AUV_sees, markers2_filtered[i], WHT, -1);
+	}
+
+	//imshow("AUV mask", AUV_sees);
+	AUV_sees = AUV_sees & frame_gray;
+	//AUV_sees = AUV_sees.mul(frame);
+	imshow("AUV sees", AUV_sees);
 
 	draw_objects(frame, markers1_filtered, YEL);
 	draw_objects(frame, markers2_filtered, PNK);
+
 
 	this->rotate_over_normal(frame, markers1, markers2);
 	this->calculate_distance(frame, markers1, markers2, true);
