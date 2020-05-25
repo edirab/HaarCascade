@@ -172,7 +172,57 @@ void AUV::calculate_distance(Mat& frame, vector<Rect> m1, vector<Rect> m2, bool 
 }
 
 
+void AUV::line_equation(int x1, int x2, int y1, int y2, double& k, double& b) {
+	// y = k*x + b
+	Eigen::Matrix2d A;
+	Eigen::Vector2d B;
+	Eigen::Vector2d X;
+
+	A.row(0) << x1, 1;
+	A.row(1) << x2, 1;
+
+	B << y1, y2;
+
+	//cout << A << "\n\n";
+	//cout << B << "\n\n";
+
+	X = A.lu().solve(B);
+
+	k = X[0];
+	b = X[1];
+}
+
 void AUV::calculate_deltas(Mat& frame, vector<Rect> m1, vector<Rect> m2, bool debug) {
+
+	static double k1 = 0;
+	static double k2 = 0;
+	static double b1 = 0;
+	static double b2 = 0;
+
+	if (m1.size() == 2) {
+		// y = k*x + b
+		this->line_equation(m1[0].x, m2[1].x, m1[0].y, m2[1].y, k1, b1);
+
+		//Eigen::Matrix2d A;
+		//Eigen::Vector2d B;
+		//Eigen::Vector2d X;
+
+		//A.row(0) << m1[0].x, 1;
+		//A.row(1) << m2[1].x, 1;
+
+		//B << m1[0].y, m2[1].y;
+
+		////cout << A << "\n\n";
+		////cout << B << "\n\n";
+
+		//X = A.lu().solve(B);
+
+		//k1 = X[0];
+		//b1 = X[1];
+
+		cout << k1 << " " << b1 << " " << m1[0].x << " " << m1[0].y << " ";
+		cout << m2[1].x << " " << m2[1].y << "\n";
+	}
 
 	return;
 }
@@ -335,4 +385,5 @@ void AUV::get_orientation(Mat &frame) {
 
 	this->rotate_over_normal(frame, markers1, markers2);
 	this->calculate_distance(frame, markers1, markers2, true);
+	this->calculate_deltas(frame, markers1, markers2, true);
 }

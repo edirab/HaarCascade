@@ -1,6 +1,8 @@
 #pragma once
 
+#include <Eigen/LU>
 #include <fstream>
+
 #include "opencv2/objdetect.hpp"
 #include "opencv2/imgproc.hpp"
 #include <opencv2/cudaobjdetect.hpp>
@@ -50,6 +52,7 @@ public:
 	void detect_and_display(Mat frame, int cascadeNum, bool saveFalsePositive);
 	void calculate_distance(Mat& frame, vector<Rect> m1, vector<Rect> m2, bool debug);
 	void calculate_deltas(Mat& frame, vector<Rect> m1, vector<Rect> m2, bool debug);
+	void line_equation(int x1, int x2, int y1, int y2, double &k, double &b);
 
 	vector<Rect> filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat& frame_gray, int m_type, Mat AUV_sees, bool debug);
 };
