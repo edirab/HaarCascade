@@ -121,7 +121,6 @@ int main(int argc, const char** argv) {
 		if (waitKey(25) == 27)
 			break;
 	}
-
 	while (!debug_on_image);
 
 	if (debug_on_image)

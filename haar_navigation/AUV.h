@@ -60,5 +60,6 @@ public:
 
 	vector<Rect> filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat& frame_gray, markerType m_type, Mat AUV_sees, bool debug);
 	void arrange_markers(Mat& frame);
+	void estimatePos();
 };
 

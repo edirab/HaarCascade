@@ -419,6 +419,10 @@ vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat&
 	return markers_;
 }
 
+void AUV::estimatePos() {
+	//https://docs.opencv.org/3.4.9/d9/d6a/group__aruco.html#ga84dd2e88f3e8c3255eb78e0f79571bd1
+	//aruco::estimatePoseSingleMarkers();
+}
 
 void AUV::get_orientation(Mat &frame) {
 
@@ -441,6 +445,8 @@ void AUV::get_orientation(Mat &frame) {
 	this->arrange_markers(our_markers);
 	this->calculate_distance(frame, markers1, markers2, true);
 	this->calculate_deltas(frame, true);
+
+	this->estimatePos();
 
 	AUV_sees = Mat::zeros(frame.size(), CV_8UC1);
 
