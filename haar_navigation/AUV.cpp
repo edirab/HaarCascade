@@ -426,15 +426,11 @@ void AUV::get_orientation(Mat &frame) {
 	equalizeHist(frame_gray, frame_gray);
 
 	vector<Rect> markers1, markers2;
-	//Scalar* color = new Scalar(0, 255, 255); // B G R
 
 	marker_type_1.detectMultiScale(frame_gray, markers1);
 	marker_type_2.detectMultiScale(frame_gray, markers2);
 
 	static Mat AUV_sees = Mat::zeros(frame.size(), CV_8UC1);
-
-	//vector<Rect> markers1_filtered = filter_objects_2(markers1, frame, frame_gray, 1, AUV_sees, false);
-	//vector<Rect> markers2_filtered = filter_objects_2(markers2, frame, frame_gray, 2, AUV_sees, false);
 
 	vector<Rect> markers1_filtered = filter_objects_2(markers1, frame, frame_gray, markerType::black_circle, AUV_sees, false);
 	vector<Rect> markers2_filtered = filter_objects_2(markers2, frame, frame_gray, markerType::white_circle, AUV_sees, false);
@@ -457,19 +453,11 @@ void AUV::get_orientation(Mat &frame) {
 
 	cout << m1.size() << " " << m2.size() << "\n";
 
-	for (int i = 0; i < m1.size(); i++) {
-		circle(our_markers, Point(m1[i].x, m1[i].y), 4, WHT, -1);
-		//rectangle(AUV_sees, markers1_filtered[i], WHT, -1);
-	}
-	for (int i = 0; i < m2.size(); i++) {
-		circle(our_markers, Point(m2[i].x, m2[i].y), 4, WHT, -1);
-		//rectangle(AUV_sees, markers1_filtered[i], WHT, -1);
-	}
-	
+	draw_configuration(our_markers, this->m1, this->m2);
 
 	//imshow("AUV mask", AUV_sees);
 	AUV_sees = AUV_sees & frame_gray;
-	//AUV_sees = AUV_sees.mul(frame);
+
 	imshow("AUV sees", AUV_sees);
 	imshow("our markers", our_markers);
 

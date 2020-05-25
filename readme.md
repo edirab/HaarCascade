@@ -37,3 +37,9 @@
 ### О том, как высчитывать fps алгоритма
 
 https://stackoverflow.com/questions/22148826/measure-opencv-fps
+
+
+***
+https://coding.likeflow.ru/2018/10/visual-studio-utf-8.html
+
+http://pr0git.blogspot.com/2015/02/git_4.html

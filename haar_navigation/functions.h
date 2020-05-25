@@ -12,9 +12,8 @@ using namespace std;
 using namespace cv;
 
 
-
-
 void draw_objects(Mat& frame, vector<Rect> objects, Scalar color);
+void draw_configuration(Mat& frame, vector<Marker> m1, vector<Marker> m2);
 void print_objects(vector<Rect> ob, string title);
 
 bool compar(Rect a, Rect b);

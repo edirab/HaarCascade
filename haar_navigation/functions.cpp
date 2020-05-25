@@ -2,13 +2,27 @@
 
 
 /*
+Точками обозначаем сами центры кружочков
+*/
+void draw_configuration(Mat& frame, vector<Marker> m1, vector<Marker> m2) {
+
+	for (int i = 0; i < m1.size(); i++) {
+		circle(frame, Point(m1[i].x, m1[i].y), 4, WHT, -1);
+	}
+	for (int i = 0; i < m2.size(); i++) {
+		circle(frame, Point(m2[i].x, m2[i].y), 4, WHT, -1);
+	}
+}
+
+
+/*
 Отобразить объекты из вектора на изображении
 */
 void draw_objects(Mat& frame, vector<Rect> objects, Scalar color) {
 
 	for (size_t i = 0; i < objects.size(); i++) {
 		//cout << "X = " << objects[i].x << " Y = " << objects[i].y << "\n";
-		Point center(objects[i].x + objects[i].width / 2, objects[i].y + objects[i].height / 2);
+		//Point center(objects[i].x + objects[i].width / 2, objects[i].y + objects[i].height / 2);
 		//ellipse(frame, center, Size(objects[i].width / 2, objects[i].height / 2), 0, 0, 360, color, 2);
 		rectangle(frame, objects[i], color);
 	}
@@ -31,6 +45,8 @@ bool compar(Rect a, Rect b) {
 	return (a.width > b.width);
 }
 /*
+	Старая функция фильтрации
+
 	Идея для фильтрации: не нужно никакое преобразование Хаффа, оно медленное
 	Можно воспользоваться априорной информацией о форме и типе маркеров:
 	Взять логическое "И" ака свёртку с шаблоном
