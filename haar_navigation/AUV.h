@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include <Eigen/LU>
 #include <fstream>
@@ -37,7 +37,7 @@ public:
 
 	double upper;
 	double lower;
-	double dist; //aka наклонная дальность
+	double dist; //aka РЅР°РєР»РѕРЅРЅР°СЏ РґР°Р»СЊРЅРѕСЃС‚СЊ
 
 	double d_yaw;
 	double d_pitch;

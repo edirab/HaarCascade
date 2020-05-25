@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include "opencv2/imgproc.hpp"
 #include <opencv2/core.hpp>
@@ -24,7 +24,7 @@ enum class markerType {
 class Marker {
 
 public:
-	// координаты центра окружности
+	// РєРѕРѕСЂРґРёРЅР°С‚С‹ С†РµРЅС‚СЂР° РѕРєСЂСѓР¶РЅРѕСЃС‚Рё
 	int x;
 	int y;
 

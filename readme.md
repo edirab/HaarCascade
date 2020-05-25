@@ -40,6 +40,25 @@ https://stackoverflow.com/questions/22148826/measure-opencv-fps
 
 
 ***
+
+### Кодировка в Visual Studio, как включить utf-8?
+
+> Есть ли способ изменить кодировку файлов в Visual Studio на utf-8? Так, чтобы это было 
+> на постоянной основе. Нашел только один способ, но он меняет кодировку только одного файла 
+> из (к примеру) сотни уже имеющихся. Это
+
+	File -> Advanced Save Options и в списке Encoding выбрать UTF-8
+
+**Ответ**
+
+> Для автоматического сохранения в UTF-8 всех новых файлов, содержащих символы, 
+> отличные от набора ASCII, необходимо включить опцию - 
+
+	Tools > Options > Environment > Documents > Save documents as Unicode when data cannot be saved in codepage 
+
 https://coding.likeflow.ru/2018/10/visual-studio-utf-8.html
 
+*** 
+
 http://pr0git.blogspot.com/2015/02/git_4.html
+
