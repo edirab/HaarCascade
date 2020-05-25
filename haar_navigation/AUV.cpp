@@ -5,6 +5,9 @@ AUV::AUV(string path1, string path2) {
 	marker_1_path = path1;
 	marker_2_path = path2;
 
+	//m1.resize(2);
+	//m2.resize(2);
+
 	//-- 1. Load the cascades
 	if (!marker_type_1.load(marker_1_path)) {
 		cout << "--(!)Error loading first cascade\n";
@@ -71,6 +74,48 @@ void AUV::rotate_over_normal(Mat& frame, vector<Rect> m1, vector<Rect> m2) {
 
 	return;
 }
+
+void AUV::arrange_markers(Mat& frame) {
+
+	//assert(m1.size() == 2 && m2.size() == 2);
+
+	if ((m1.size() == 2 && m2.size() == 2)) {
+
+		if (this->d_roll > 0) {
+
+			//if (m1[0].x > m1[1].x && m1[0].y < m1[1].y) {
+			if (m1[0].y < m1[1].y) {
+				swap(m1[0], m1[1]);
+			}
+			if (m2[0].y < m2[1].y) {
+				swap(m2[0], m2[1]);
+			}
+		}
+		else if (this->d_roll <= 0) {
+
+			if (m1[0].y > m1[1].y) {
+				swap(m1[0], m1[1]);
+			}
+			if (m2[0].y > m2[1].y) {
+				swap(m2[0], m2[1]);
+			}
+		}
+
+		Scalar COLOR;
+		if (frame.channels() == 1) {
+			COLOR = WHT;
+		}
+		else {
+			COLOR = RED;
+		}
+
+		putText(frame, String("11"), Point(m1[0].x + 10, m1[0].y - 10), 1, 1, COLOR);
+		putText(frame, String("12"), Point(m1[1].x + 10, m1[1].y - 10), 1, 1, COLOR);
+		putText(frame, String("21"), Point(m2[0].x + 10, m2[0].y - 10), 1, 1, COLOR);
+		putText(frame, String("22"), Point(m2[1].x + 10, m2[1].y - 10), 1, 1, COLOR);
+	}
+}
+
 
 void AUV::detect_and_display(Mat frame, int cascadeNum, bool saveFalsePositive = false) {
 	//cout << "Inside detect_Display";
@@ -172,27 +217,39 @@ void AUV::calculate_distance(Mat& frame, vector<Rect> m1, vector<Rect> m2, bool 
 }
 
 
-void AUV::line_equation(int x1, int x2, int y1, int y2, double& k, double& b) {
+void AUV::line_equation(double& k, double& b, bool mainDiag) {
 	// y = k*x + b
 	Eigen::Matrix2d A;
 	Eigen::Vector2d B;
 	Eigen::Vector2d X;
 
-	A.row(0) << x1, 1;
-	A.row(1) << x2, 1;
+	if (m1.size() == 2 && m2.size() == 2) {
 
-	B << y1, y2;
+		if (mainDiag) {
 
-	//cout << A << "\n\n";
-	//cout << B << "\n\n";
+			A.row(0) << m1[0].x, 1;
+			A.row(1) << m2[1].x, 1;
 
-	X = A.lu().solve(B);
+			B << m1[0].y, m2[1].y;
+		}
+		else {
+			A.row(0) << m1[1].x, 1;
+			A.row(1) << m2[0].x, 1;
 
-	k = X[0];
-	b = X[1];
+			B << m1[1].y, m2[0].y;
+		}
+		//cout << A << "\n\n";
+		//cout << B << "\n\n";
+
+		X = A.lu().solve(B);
+
+		k = X[0];
+		b = X[1];
+	}
 }
 
-void AUV::calculate_deltas(Mat& frame, vector<Rect> m1, vector<Rect> m2, bool debug) {
+
+void AUV::calculate_deltas(Mat& frame, bool debug) {
 
 	static double k1 = 0;
 	static double k2 = 0;
@@ -201,7 +258,8 @@ void AUV::calculate_deltas(Mat& frame, vector<Rect> m1, vector<Rect> m2, bool de
 
 	if (m1.size() == 2) {
 		// y = k*x + b
-		this->line_equation(m1[0].x, m2[1].x, m1[0].y, m2[1].y, k1, b1);
+		this->line_equation(k1, b1, true);
+		this->line_equation(k2, b2, false);
 
 		//Eigen::Matrix2d A;
 		//Eigen::Vector2d B;
@@ -222,12 +280,15 @@ void AUV::calculate_deltas(Mat& frame, vector<Rect> m1, vector<Rect> m2, bool de
 
 		cout << k1 << " " << b1 << " " << m1[0].x << " " << m1[0].y << " ";
 		cout << m2[1].x << " " << m2[1].y << "\n";
+
+		cout << k2 << " " << b2 << " " << m1[1].x << " " << m1[1].y << " ";
+		cout << m2[0].x << " " << m2[0].y << "\n";
 	}
 
 	return;
 }
 
-vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat& frame_gray, int m_type, Mat AUV_sees, bool debug = false) {
+vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat& frame_gray, markerType m_type, Mat AUV_sees, bool debug = false) {
 
 	vector<Rect> markers_;
 	vector<Rect> hough_valid;
@@ -260,6 +321,13 @@ vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat&
 		*/
 		if (circles.size() == 1) {
 			hough_valid.push_back(objects[i]);
+
+			Marker temp_m(objects[i].x + int(circles[0][0]), objects[i].y + int(circles[0][1]), m_type);
+
+			if (m_type == markerType::black_circle)
+				m1.push_back(temp_m);
+			else
+				m2.push_back(temp_m);
 		}
 		/*
 		В одном roi кружочков больше одного. Что странно
@@ -268,7 +336,7 @@ vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat&
 		else if (circles.size() > 1) {
 
 			Mat t;
-			if (m_type == 1) {
+			if (m_type == markerType::black_circle) {
 				t = Marker::get_template_t1(roi.rows, roi.cols);
 				absdiff(roi, t, roi);
 				int nonZero = countNonZero(roi);
@@ -289,7 +357,7 @@ vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat&
 			Mat t;
 			
 
-			if (m_type == 1) {
+			if (m_type == markerType::black_circle) {
 				t = Marker::get_template_t1(roi.rows, roi.cols);
 				threshold(roi, roi, 60, 255, THRESH_BINARY);
 				//imshow("roi m1 thresholded", roi);
@@ -313,6 +381,9 @@ vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat&
 		// конец проверки маской
 	}
 
+	/*
+	
+	*/
 	if (hough_valid.size() > 2) {
 		for (size_t i = 0; i < hough_valid.size() - 1; i++) {
 
@@ -326,7 +397,7 @@ vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat&
 			if (debug)
 				cout << "delta = " << delta << " diff = " << diff << "\n";
 
-			if (diff < 0.05) {
+			if (diff < 0.1) {
 
 				markers_.push_back(hough_valid[i]);
 				markers_.push_back(hough_valid[i + 1]);
@@ -362,8 +433,18 @@ void AUV::get_orientation(Mat &frame) {
 
 	static Mat AUV_sees = Mat::zeros(frame.size(), CV_8UC1);
 
-	vector<Rect> markers1_filtered = filter_objects_2(markers1, frame, frame_gray, 1, AUV_sees, false);
-	vector<Rect> markers2_filtered = filter_objects_2(markers2, frame, frame_gray, 2, AUV_sees, false);
+	//vector<Rect> markers1_filtered = filter_objects_2(markers1, frame, frame_gray, 1, AUV_sees, false);
+	//vector<Rect> markers2_filtered = filter_objects_2(markers2, frame, frame_gray, 2, AUV_sees, false);
+
+	vector<Rect> markers1_filtered = filter_objects_2(markers1, frame, frame_gray, markerType::black_circle, AUV_sees, false);
+	vector<Rect> markers2_filtered = filter_objects_2(markers2, frame, frame_gray, markerType::white_circle, AUV_sees, false);
+
+	Mat our_markers = Mat::zeros(frame.size(), CV_8UC1);
+
+	this->rotate_over_normal(frame, markers1, markers2);
+	this->arrange_markers(our_markers);
+	this->calculate_distance(frame, markers1, markers2, true);
+	this->calculate_deltas(frame, true);
 
 	AUV_sees = Mat::zeros(frame.size(), CV_8UC1);
 
@@ -374,16 +455,26 @@ void AUV::get_orientation(Mat &frame) {
 		rectangle(AUV_sees, markers2_filtered[i], WHT, -1);
 	}
 
+	cout << m1.size() << " " << m2.size() << "\n";
+
+	for (int i = 0; i < m1.size(); i++) {
+		circle(our_markers, Point(m1[i].x, m1[i].y), 4, WHT, -1);
+		//rectangle(AUV_sees, markers1_filtered[i], WHT, -1);
+	}
+	for (int i = 0; i < m2.size(); i++) {
+		circle(our_markers, Point(m2[i].x, m2[i].y), 4, WHT, -1);
+		//rectangle(AUV_sees, markers1_filtered[i], WHT, -1);
+	}
+	
+
 	//imshow("AUV mask", AUV_sees);
 	AUV_sees = AUV_sees & frame_gray;
 	//AUV_sees = AUV_sees.mul(frame);
 	imshow("AUV sees", AUV_sees);
+	imshow("our markers", our_markers);
 
 	draw_objects(frame, markers1_filtered, YEL);
 	draw_objects(frame, markers2_filtered, PNK);
 
 
-	this->rotate_over_normal(frame, markers1, markers2);
-	this->calculate_distance(frame, markers1, markers2, true);
-	this->calculate_deltas(frame, markers1, markers2, true);
 }

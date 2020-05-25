@@ -1,6 +1,7 @@
 #pragma once
 
 #include "opencv2/imgproc.hpp"
+#include <opencv2/core.hpp>
 
 using namespace cv;
 
@@ -23,15 +24,17 @@ enum class markerType {
 class Marker {
 
 public:
+	// координаты центра окружности
 	int x;
 	int y;
 
 	markerType t;
 	bool isValid = true;
 
-	int roi_x, roi_y, roi_w, roi_h;
+	//int roi_x, roi_y, roi_w, roi_h;
+	Rect roi;
 
-	Marker(int, int, enum markerType);
+	Marker(int _x, int _y, enum markerType _t);
 
 	static Mat get_template_t1(int w, int h);
 	static Mat get_template_t2(int w, int h);

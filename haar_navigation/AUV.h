@@ -27,6 +27,10 @@ class AUV {
 	Mat frame_gray;
 
 public:
+
+	vector<Marker> m1;
+	vector<Marker> m2;
+
 	double delta_x;
 	double delta_y;
 	double delta_z;
@@ -51,9 +55,10 @@ public:
 	void rotate_over_normal(Mat& frame, vector<Rect> m1, vector<Rect> m2);
 	void detect_and_display(Mat frame, int cascadeNum, bool saveFalsePositive);
 	void calculate_distance(Mat& frame, vector<Rect> m1, vector<Rect> m2, bool debug);
-	void calculate_deltas(Mat& frame, vector<Rect> m1, vector<Rect> m2, bool debug);
-	void line_equation(int x1, int x2, int y1, int y2, double &k, double &b);
+	void calculate_deltas(Mat& frame, bool debug);
+	void line_equation(double &k, double &b, bool mainDiag);
 
-	vector<Rect> filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat& frame_gray, int m_type, Mat AUV_sees, bool debug);
+	vector<Rect> filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat& frame_gray, markerType m_type, Mat AUV_sees, bool debug);
+	void arrange_markers(Mat& frame);
 };
 
