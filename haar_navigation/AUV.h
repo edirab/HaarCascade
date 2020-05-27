@@ -7,13 +7,14 @@
 #include "opencv2/imgproc.hpp"
 #include <opencv2/cudaobjdetect.hpp>
 
-//#include <opencv2/
+#include <opencv2/aruco.hpp>
 
 #include "Marker.h"
 #include "functions.h"
 
 
 using namespace cv;
+using namespace aruco;
 using namespace std;
 
 class AUV {

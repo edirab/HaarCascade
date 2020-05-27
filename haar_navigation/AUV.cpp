@@ -421,7 +421,7 @@ vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat&
 
 void AUV::estimatePos() {
 	//https://docs.opencv.org/3.4.9/d9/d6a/group__aruco.html#ga84dd2e88f3e8c3255eb78e0f79571bd1
-	//aruco::estimatePoseSingleMarkers();
+	
 
 
 	vector<vector<double>> cMatrix640{ 
@@ -436,7 +436,41 @@ void AUV::estimatePos() {
 							{ 0, 0, 1 }
 	};
 
+	vector<double> distortion640{ 0, -6.1539772782054671e-02, 0, 0, 1.7618036793466491e-02 };
 
+	vector<double> distortion1280{ 0, -6.5524123635067169e-02, 0, 0, 0 };
+
+	vector<Vec3d> tvec = { Vec3d(0, 0, 0) };
+	vector<Vec3d> rvec = { Vec3d(0, 0, 0) };
+
+	cv::Mat Rvec;
+	cv::Mat Tvec;
+
+	//cv::Mat_<float> Tvec;
+
+	float markerLen = 100; // здесь именно расстояние между нашими маркерами, а не сторона одного маркера
+
+	vector<vector<Point2f>> corners = { {
+										Point2f(m1[0].x, m1[0].y),
+										Point2f(m1[1].x, m1[1].y),
+										Point2f(m2[1].x, m2[1].y),
+										Point2f(m2[0].x, m2[0].y)}
+	};
+
+	//estimatePoseSingleMarkers(corners, markerLen, cMatrix640, distortion640, rvec, tvec);
+	estimatePoseSingleMarkers(corners, markerLen, cMatrix640, distortion640, rvec, tvec);
+
+	//for (int i = 0; i < tvec.size(); i++) {
+	//	for (int j = 0; j < 3; j++)
+	//		cout << tvec[i][j] << " ";
+	//}
+	//cout << "\n";
+
+	//for (int i = 0; i < rvec.size(); i++) {
+	//	for (int j = 0; j < 3; j++)
+	//		cout << rvec[i][j] << " ";
+	//}
+	//cout << "\n";
 }
 
 void AUV::get_orientation(Mat &frame) {

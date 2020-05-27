@@ -7,8 +7,8 @@ cuda/
 trash.cpp
 ~*
 
-test/
-
+haar_navigation/test/*.jpg
+!haar_navigation/test/2.jpg
 
 preparing waiter/videos/*.mp4
 preparing waiter/extracted_images/**/*.jpg
