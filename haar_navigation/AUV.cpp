@@ -422,6 +422,21 @@ vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat&
 void AUV::estimatePos() {
 	//https://docs.opencv.org/3.4.9/d9/d6a/group__aruco.html#ga84dd2e88f3e8c3255eb78e0f79571bd1
 	//aruco::estimatePoseSingleMarkers();
+
+
+	vector<vector<double>> cMatrix640{ 
+								{ 5.3226273868525448e+02, 0, 3.2590522394049350e+02 },
+								{ 0, 5.3226273868525448e+02, 2.6946997900677803e+02 },
+								{ 0, 0, 1 } 
+	};
+
+	vector<vector<double>> cMatrix1280{
+							{ 8.6155235630774325e+02, 0, 6.2961522415048103e+02 },
+							{ 0, 8.6155235630774325e+02, 3.9881978167213623e+02 },
+							{ 0, 0, 1 }
+	};
+
+
 }
 
 void AUV::get_orientation(Mat &frame) {

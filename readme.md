@@ -62,3 +62,10 @@ https://coding.likeflow.ru/2018/10/visual-studio-utf-8.html
 
 http://pr0git.blogspot.com/2015/02/git_4.html
 
+
+### Important notes
+
+CUDA 9.2 requires Visual Studio 2017 or ealier, OpenCV 3.x compatability
+CUDA 10.x + OpenCV 4.1.1 + contrib or higher, VS 2019
+
+https://habr.com/ru/post/464015/

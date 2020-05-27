@@ -6,6 +6,9 @@
 #include "opencv2/objdetect.hpp"
 #include "opencv2/imgproc.hpp"
 #include <opencv2/cudaobjdetect.hpp>
+
+//#include <opencv2/
+
 #include "Marker.h"
 #include "functions.h"
 
