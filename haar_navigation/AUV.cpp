@@ -457,20 +457,22 @@ void AUV::estimatePos() {
 										Point2f(m2[0].x, m2[0].y)}
 	};
 
+	estimatePoseSingleMarkers(corners, markerLen, cMatrix640, distortion640, Rvec, Tvec);
 	//estimatePoseSingleMarkers(corners, markerLen, cMatrix640, distortion640, rvec, tvec);
-	estimatePoseSingleMarkers(corners, markerLen, cMatrix640, distortion640, rvec, tvec);
 
-	//for (int i = 0; i < tvec.size(); i++) {
-	//	for (int j = 0; j < 3; j++)
-	//		cout << tvec[i][j] << " ";
-	//}
-	//cout << "\n";
+	cout << "lalala \n";
 
-	//for (int i = 0; i < rvec.size(); i++) {
-	//	for (int j = 0; j < 3; j++)
-	//		cout << rvec[i][j] << " ";
-	//}
-	//cout << "\n";
+	for (int i = 0; i < tvec.size(); i++) {
+		for (int j = 0; j < 3; j++)
+			cout << tvec[i][j] << " ";
+	}
+	cout << "\n";
+
+	for (int i = 0; i < rvec.size(); i++) {
+		for (int j = 0; j < 3; j++)
+			cout << rvec[i][j] << " ";
+	}
+	cout << "\n";
 }
 
 void AUV::get_orientation(Mat &frame) {
