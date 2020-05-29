@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "haar_navigation", "haar_nav
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "distance_calibration", "distance_calibration\distance_calibration.vcxproj", "{2B5B00C4-48F0-45E5-A46A-DD4B59C07EFB}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test-solvePnP", "test-solvePnP\test-solvePnP.vcxproj", "{679C3735-5D4E-422C-B4A4-4C4A630FCE5E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -75,6 +77,14 @@ Global
 		{2B5B00C4-48F0-45E5-A46A-DD4B59C07EFB}.Release|x64.Build.0 = Release|x64
 		{2B5B00C4-48F0-45E5-A46A-DD4B59C07EFB}.Release|x86.ActiveCfg = Release|Win32
 		{2B5B00C4-48F0-45E5-A46A-DD4B59C07EFB}.Release|x86.Build.0 = Release|Win32
+		{679C3735-5D4E-422C-B4A4-4C4A630FCE5E}.Debug|x64.ActiveCfg = Debug|x64
+		{679C3735-5D4E-422C-B4A4-4C4A630FCE5E}.Debug|x64.Build.0 = Debug|x64
+		{679C3735-5D4E-422C-B4A4-4C4A630FCE5E}.Debug|x86.ActiveCfg = Debug|Win32
+		{679C3735-5D4E-422C-B4A4-4C4A630FCE5E}.Debug|x86.Build.0 = Debug|Win32
+		{679C3735-5D4E-422C-B4A4-4C4A630FCE5E}.Release|x64.ActiveCfg = Release|x64
+		{679C3735-5D4E-422C-B4A4-4C4A630FCE5E}.Release|x64.Build.0 = Release|x64
+		{679C3735-5D4E-422C-B4A4-4C4A630FCE5E}.Release|x86.ActiveCfg = Release|Win32
+		{679C3735-5D4E-422C-B4A4-4C4A630FCE5E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

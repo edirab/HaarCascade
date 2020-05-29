@@ -308,8 +308,8 @@ vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat&
 		roi = frame_gray(objects[i]);
 		medianBlur(roi, roi, 5);
 
-		Mat t = Marker::get_template_t2(roi.rows, roi.cols);
-		imshow("Mat t", t);
+		//Mat t = Marker::get_template_t2(roi.rows, roi.cols);
+		//imshow("Mat t", t);
 
 		/*
 		Ищем все кружочки внутри одного ROI
@@ -379,7 +379,7 @@ vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat&
 				//fout << "m1 = " << nonZero << "\n";
 			}
 			else {
-				t = Marker::get_template_t1(roi.rows, roi.cols);
+				t = Marker::get_template_t2(roi.rows, roi.cols);
 				threshold(roi, roi, 200, 255, THRESH_BINARY);
 				//imshow("roi m2 thresholded", roi);
 
@@ -430,16 +430,22 @@ vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat&
 	return markers_;
 }
 
+
 void AUV::estimatePos() {
 	//https://docs.opencv.org/3.4.9/d9/d6a/group__aruco.html#ga84dd2e88f3e8c3255eb78e0f79571bd1
+
+	double focal_length = frame_gray.cols; // Approximate focal length.
+	Point2d center = cv::Point2d(frame_gray.cols / 2, frame_gray.rows / 2);
+	cv::Mat camera_matrix = (cv::Mat_<double>(3, 3) << focal_length, 0, center.x, 0, focal_length, center.y, 0, 0, 1);
+	cout << "Camera Matrix " << endl << camera_matrix << endl;
+
+	//vector<vector<double>> cMatrix640{ 
+	//							{ 5.3226273868525448e+02, 0, 3.2590522394049350e+02 },
+	//							{ 0, 5.3226273868525448e+02, 2.6946997900677803e+02 },
+	//							{ 0, 0, 1 } 
+	//};
+	Mat cMatrix640 = (cv::Mat_<double>(3, 3) << 5.3226273868525448e+02, 0, 3.2590522394049350e+02, 0, 5.3226273868525448e+02, 2.6946997900677803e+02, 0, 0, 1 );
 	
-
-
-	vector<vector<double>> cMatrix640{ 
-								{ 5.3226273868525448e+02, 0, 3.2590522394049350e+02 },
-								{ 0, 5.3226273868525448e+02, 2.6946997900677803e+02 },
-								{ 0, 0, 1 } 
-	};
 
 	vector<vector<double>> cMatrix1280{
 							{ 8.6155235630774325e+02, 0, 6.2961522415048103e+02 },
@@ -447,7 +453,9 @@ void AUV::estimatePos() {
 							{ 0, 0, 1 }
 	};
 
-	vector<double> distortion640{ 0, -6.1539772782054671e-02, 0, 0, 1.7618036793466491e-02 };
+	//vector<double> distortion640{ 0, -6.1539772782054671e-02, 0, 0, 1.7618036793466491e-02 };
+	//cv::Mat distortion640 = cv::Mat::zeros(4, 1, cv::DataType<double>::type); // Assuming no lens distortion
+	cv::Mat distortion640 = (cv::Mat_<double>(1, 5) <<  0, -6.1539772782054671e-02, 0, 0, 1.7618036793466491e-02 );
 
 	vector<double> distortion1280{ 0, -6.5524123635067169e-02, 0, 0, 0 };
 
@@ -461,29 +469,43 @@ void AUV::estimatePos() {
 
 	float markerLen = 100; // здесь именно расстояние между нашими маркерами, а не сторона одного маркера
 
-	vector<vector<Point2f>> corners = { {
-										Point2f(m1[0].x, m1[0].y),
-										Point2f(m1[1].x, m1[1].y),
-										Point2f(m2[1].x, m2[1].y),
-										Point2f(m2[0].x, m2[0].y)}
+	vector<Point2d> corners = {
+										Point2d(m1[0].x, m1[0].y),
+										Point2d(m1[1].x, m1[1].y),
+										Point2d(m2[1].x, m2[1].y),
+										Point2d(m2[0].x, m2[0].y)
 	};
 
-	estimatePoseSingleMarkers(corners, markerLen, cMatrix640, distortion640, Rvec, Tvec);
+	vector<cv::Point3d> model_points;
+	model_points.push_back(cv::Point3d(-50, 50, 0));  // left up corner
+	model_points.push_back(cv::Point3d(50, 50, 0));   // right up corner
+	model_points.push_back(cv::Point3d(50, -50, 0));  // left up corner
+	model_points.push_back(cv::Point3d(-50, -50, 0)); // left down corner
+
+
+	//estimatePoseSingleMarkers(corners, markerLen, cMatrix640, distortion640, Rvec, Tvec);
 	//estimatePoseSingleMarkers(corners, markerLen, cMatrix640, distortion640, rvec, tvec);
 
-	cout << "lalala \n";
+	// Solve for pose
+	solvePnP(model_points, corners, cMatrix640, distortion640, Rvec, Tvec);
+	//solvePnP(model_points, corners, camera_matrix, distortion640, Rvec, Tvec);
 
-	for (int i = 0; i < tvec.size(); i++) {
-		for (int j = 0; j < 3; j++)
-			cout << tvec[i][j] << " ";
-	}
-	cout << "\n";
+	
+	//cout << "lalala \n";
+	cout << "Rotation Vector " << endl << Rvec << endl;
+	cout << "Translation Vector" << endl << Tvec << endl;
 
-	for (int i = 0; i < rvec.size(); i++) {
-		for (int j = 0; j < 3; j++)
-			cout << rvec[i][j] << " ";
-	}
-	cout << "\n";
+	//for (int i = 0; i < tvec.size(); i++) {
+	//	for (int j = 0; j < 3; j++)
+	//		cout << tvec[i][j] << " ";
+	//}
+	//cout << "\n";
+
+	//for (int i = 0; i < rvec.size(); i++) {
+	//	for (int j = 0; j < 3; j++)
+	//		cout << rvec[i][j] << " ";
+	//}
+	//cout << "\n";
 }
 
 void AUV::get_orientation(Mat &frame) {
@@ -506,9 +528,9 @@ void AUV::get_orientation(Mat &frame) {
 	this->rotate_over_normal(frame, markers1, markers2);
 	this->arrange_markers(our_markers);
 	this->calculate_distance(frame, markers1, markers2, true);
-	this->calculate_deltas(frame, true);
+	//this->calculate_deltas(frame, true);
 
-	//this->estimatePos();
+	this->estimatePos();
 
 	AUV_sees = Mat::zeros(frame.size(), CV_8UC1);
 

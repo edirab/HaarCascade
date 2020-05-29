@@ -3,6 +3,7 @@
 #include <Eigen/LU>
 #include <fstream>
 
+#include <opencv2/opencv.hpp>
 #include "opencv2/objdetect.hpp"
 #include "opencv2/imgproc.hpp"
 #include <opencv2/cudaobjdetect.hpp>
