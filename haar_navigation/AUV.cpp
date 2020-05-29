@@ -300,12 +300,16 @@ vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat&
 	if (debug)
 		cout << "objects.size() = " << objects.size() << "\n";
 
+
 	// всё делается за один проход
 	for (int i = 0; i < objects.size(); i++) {
 
 		vector<Vec3f> circles;
 		roi = frame_gray(objects[i]);
 		medianBlur(roi, roi, 5);
+
+		Mat t = Marker::get_template_t2(roi.rows, roi.cols);
+		imshow("Mat t", t);
 
 		/*
 		Ищем все кружочки внутри одного ROI
@@ -338,15 +342,22 @@ vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat&
 			Mat t;
 			if (m_type == markerType::black_circle) {
 				t = Marker::get_template_t1(roi.rows, roi.cols);
+				threshold(roi, roi, 200, 255, 0);
 				absdiff(roi, t, roi);
 				int nonZero = countNonZero(roi);
-				//cout  << "m1 =" << setw(5) << nonZero << "\n";
+
+				//if (nonZero < 0.1 * frame_gray.cols) {
+				//	hough_valid.push_back(objects[i]);
+				//}
 			}
 			else {
-				t = Marker::get_template_t1(roi.rows, roi.cols);
+				t = Marker::get_template_t2(roi.rows, roi.cols);
+				threshold(roi, roi, 200, 255, 0);
 				absdiff(roi, t, roi);
 				int nonZero = countNonZero(roi);
-				//cout  << " m2 ="<< setw(5) << nonZero << "\n";
+				//if (nonZero < 0.15 * frame_gray.cols) {
+				//	hough_valid.push_back(objects[i]);
+				//}
 			}
 		}
 		/*
@@ -497,7 +508,7 @@ void AUV::get_orientation(Mat &frame) {
 	this->calculate_distance(frame, markers1, markers2, true);
 	this->calculate_deltas(frame, true);
 
-	this->estimatePos();
+	//this->estimatePos();
 
 	AUV_sees = Mat::zeros(frame.size(), CV_8UC1);
 
