@@ -32,6 +32,7 @@ class AUV {
 	Mat frame_gray;
 
 public:
+	Mat AUV_sees;
 
 	vector<Marker> m1;
 	vector<Marker> m2;

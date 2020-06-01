@@ -328,10 +328,10 @@ vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat&
 
 			Marker temp_m(objects[i].x + int(circles[0][0]), objects[i].y + int(circles[0][1]), m_type);
 
-			if (m_type == markerType::black_circle)
-				m1.push_back(temp_m);
-			else
-				m2.push_back(temp_m);
+			//if (m_type == markerType::black_circle)
+			//	m1.push_back(temp_m);
+			//else
+			//	m2.push_back(temp_m);
 		}
 		/*
 		В одном roi кружочков больше одного. Что странно
@@ -434,78 +434,95 @@ vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat&
 void AUV::estimatePos() {
 	//https://docs.opencv.org/3.4.9/d9/d6a/group__aruco.html#ga84dd2e88f3e8c3255eb78e0f79571bd1
 
-	double focal_length = frame_gray.cols; // Approximate focal length.
-	Point2d center = cv::Point2d(frame_gray.cols / 2, frame_gray.rows / 2);
-	cv::Mat camera_matrix = (cv::Mat_<double>(3, 3) << focal_length, 0, center.x, 0, focal_length, center.y, 0, 0, 1);
-	cout << "Camera Matrix " << endl << camera_matrix << endl;
+	if (this->m1.size() == 2 && this->m2.size() == 2) {
 
-	//vector<vector<double>> cMatrix640{ 
-	//							{ 5.3226273868525448e+02, 0, 3.2590522394049350e+02 },
-	//							{ 0, 5.3226273868525448e+02, 2.6946997900677803e+02 },
-	//							{ 0, 0, 1 } 
-	//};
-	Mat cMatrix640 = (cv::Mat_<double>(3, 3) << 5.3226273868525448e+02, 0, 3.2590522394049350e+02, 0, 5.3226273868525448e+02, 2.6946997900677803e+02, 0, 0, 1 );
-	
+		double focal_length = frame_gray.cols; // Approximate focal length.
+		Point2d center = cv::Point2d(frame_gray.cols / 2, frame_gray.rows / 2);
+		cv::Mat camera_matrix = (cv::Mat_<double>(3, 3) << focal_length, 0, center.x, 0, focal_length, center.y, 0, 0, 1);
+		//cout << "Camera Matrix " << endl << camera_matrix << endl;
 
-	vector<vector<double>> cMatrix1280{
-							{ 8.6155235630774325e+02, 0, 6.2961522415048103e+02 },
-							{ 0, 8.6155235630774325e+02, 3.9881978167213623e+02 },
-							{ 0, 0, 1 }
-	};
-
-	//vector<double> distortion640{ 0, -6.1539772782054671e-02, 0, 0, 1.7618036793466491e-02 };
-	//cv::Mat distortion640 = cv::Mat::zeros(4, 1, cv::DataType<double>::type); // Assuming no lens distortion
-	cv::Mat distortion640 = (cv::Mat_<double>(1, 5) <<  0, -6.1539772782054671e-02, 0, 0, 1.7618036793466491e-02 );
-
-	vector<double> distortion1280{ 0, -6.5524123635067169e-02, 0, 0, 0 };
-
-	vector<Vec3d> tvec = { Vec3d(0, 0, 0) };
-	vector<Vec3d> rvec = { Vec3d(0, 0, 0) };
-
-	cv::Mat Rvec;
-	cv::Mat Tvec;
-
-	//cv::Mat_<float> Tvec;
-
-	float markerLen = 100; // здесь именно расстояние между нашими маркерами, а не сторона одного маркера
-
-	vector<Point2d> corners = {
-										Point2d(m1[0].x, m1[0].y),
-										Point2d(m1[1].x, m1[1].y),
-										Point2d(m2[1].x, m2[1].y),
-										Point2d(m2[0].x, m2[0].y)
-	};
-
-	vector<cv::Point3d> model_points;
-	model_points.push_back(cv::Point3d(-50, 50, 0));  // left up corner
-	model_points.push_back(cv::Point3d(50, 50, 0));   // right up corner
-	model_points.push_back(cv::Point3d(50, -50, 0));  // left up corner
-	model_points.push_back(cv::Point3d(-50, -50, 0)); // left down corner
+		//vector<vector<double>> cMatrix640{ 
+		//							{ 5.3226273868525448e+02, 0, 3.2590522394049350e+02 },
+		//							{ 0, 5.3226273868525448e+02, 2.6946997900677803e+02 },
+		//							{ 0, 0, 1 } 
+		//};
+		Mat cMatrix640 = (cv::Mat_<double>(3, 3) << 5.3226273868525448e+02, 0, 3.2590522394049350e+02, 0, 5.3226273868525448e+02, 2.6946997900677803e+02, 0, 0, 1);
 
 
-	//estimatePoseSingleMarkers(corners, markerLen, cMatrix640, distortion640, Rvec, Tvec);
-	//estimatePoseSingleMarkers(corners, markerLen, cMatrix640, distortion640, rvec, tvec);
+		vector<vector<double>> cMatrix1280{
+								{ 8.6155235630774325e+02, 0, 6.2961522415048103e+02 },
+								{ 0, 8.6155235630774325e+02, 3.9881978167213623e+02 },
+								{ 0, 0, 1 }
+		};
 
-	// Solve for pose
-	solvePnP(model_points, corners, cMatrix640, distortion640, Rvec, Tvec);
-	//solvePnP(model_points, corners, camera_matrix, distortion640, Rvec, Tvec);
+		//vector<double> distortion640{ 0, -6.1539772782054671e-02, 0, 0, 1.7618036793466491e-02 };
+		//cv::Mat distortion640 = cv::Mat::zeros(4, 1, cv::DataType<double>::type); // Assuming no lens distortion
+		cv::Mat distortion640 = (cv::Mat_<double>(1, 5) << 0, -6.1539772782054671e-02, 0, 0, 1.7618036793466491e-02);
 
-	
-	//cout << "lalala \n";
-	cout << "Rotation Vector " << endl << Rvec << endl;
-	cout << "Translation Vector" << endl << Tvec << endl;
+		vector<double> distortion1280{ 0, -6.5524123635067169e-02, 0, 0, 0 };
 
-	//for (int i = 0; i < tvec.size(); i++) {
-	//	for (int j = 0; j < 3; j++)
-	//		cout << tvec[i][j] << " ";
-	//}
-	//cout << "\n";
+		vector<Vec3d> tvec = { Vec3d(0, 0, 0) };
+		vector<Vec3d> rvec = { Vec3d(0, 0, 0) };
 
-	//for (int i = 0; i < rvec.size(); i++) {
-	//	for (int j = 0; j < 3; j++)
-	//		cout << rvec[i][j] << " ";
-	//}
-	//cout << "\n";
+		cv::Mat Rvec;
+		cv::Mat Tvec;
+
+		//cv::Mat_<float> Tvec;
+
+		float markerLen = 100; // здесь именно расстояние между нашими маркерами, а не сторона одного маркера
+
+		vector<Point2d> corners = {
+											Point2d(m1[0].x, m1[0].y),
+											Point2d(m1[1].x, m1[1].y),
+											Point2d(m2[1].x, m2[1].y),
+											Point2d(m2[0].x, m2[0].y)
+		};
+
+		vector<cv::Point3d> model_points;
+		model_points.push_back(cv::Point3d(-50, 50, 0));  // left up corner
+		model_points.push_back(cv::Point3d(50, 50, 0));   // right up corner
+		model_points.push_back(cv::Point3d(50, -50, 0));  // left up corner
+		model_points.push_back(cv::Point3d(-50, -50, 0)); // left down corner
+
+
+		//estimatePoseSingleMarkers(corners, markerLen, cMatrix640, distortion640, Rvec, Tvec);
+		//estimatePoseSingleMarkers(corners, markerLen, cMatrix640, distortion640, rvec, tvec);
+
+		// Solve for pose
+		solvePnP(model_points, corners, cMatrix640, distortion640, Rvec, Tvec);
+		//solvePnP(model_points, corners, camera_matrix, distortion640, Rvec, Tvec);
+
+
+		//cout << "Rotation Vector " << endl << Rvec << endl;
+		//cout << "Translation Vector" << endl << Tvec << endl;
+
+		cout << setprecision(5);
+
+
+		for (int j = 0; j < Tvec.rows; j++) {
+			cout << setw(8) << Tvec.at<double>(j, 0);
+		}
+
+		cout << "\n";
+
+		//projectPoints()
+
+		//for (int i = 0; i < tvec.size(); i++) {
+		//	for (int j = 0; j < 3; j++)
+		//		cout << tvec[i][j] << " ";
+		//}
+		//cout << "\n";
+
+		//for (int i = 0; i < rvec.size(); i++) {
+		//	for (int j = 0; j < 3; j++)
+		//		cout << rvec[i][j] << " ";
+		//}
+		//cout << "\n";
+	}
+	else {
+		cout << "Less than 4 markers\n";
+		cout << m1.size() << " "  << m2.size() << "\n";
+	}
 }
 
 void AUV::get_orientation(Mat &frame) {
@@ -518,16 +535,21 @@ void AUV::get_orientation(Mat &frame) {
 	marker_type_1.detectMultiScale(frame_gray, markers1);
 	marker_type_2.detectMultiScale(frame_gray, markers2);
 
-	static Mat AUV_sees = Mat::zeros(frame.size(), CV_8UC1);
 
 	vector<Rect> markers1_filtered = filter_objects_2(markers1, frame, frame_gray, markerType::black_circle, AUV_sees, false);
 	vector<Rect> markers2_filtered = filter_objects_2(markers2, frame, frame_gray, markerType::white_circle, AUV_sees, false);
+
+	//if (markers1_filtered.size() == 2) {
+
+	//	Marker temp_m(objects[i].x + int(circles[0][0]), objects[i].y + int(circles[0][1]), m_type);
+	//	m1.push_back(temp_m);
+	//}
 
 	Mat our_markers = Mat::zeros(frame.size(), CV_8UC1);
 
 	this->rotate_over_normal(frame, markers1, markers2);
 	this->arrange_markers(our_markers);
-	this->calculate_distance(frame, markers1, markers2, true);
+	this->calculate_distance(frame, markers1, markers2, false);
 	//this->calculate_deltas(frame, true);
 
 	this->estimatePos();
@@ -541,7 +563,7 @@ void AUV::get_orientation(Mat &frame) {
 		rectangle(AUV_sees, markers2_filtered[i], WHT, -1);
 	}
 
-	cout << m1.size() << " " << m2.size() << "\n";
+	//cout << m1.size() << " " << m2.size() << "\n";
 
 	draw_configuration(our_markers, this->m1, this->m2);
 
