@@ -21,6 +21,7 @@ using namespace std;
 class AUV {
 
 	double detection_coeff; // px * coeff = cm
+
 	CascadeClassifier marker_type_1, marker_type_2;
 
 	String marker_1_path;
@@ -30,6 +31,20 @@ class AUV {
 	int marker1Counter_prev = 0, marker2Counter_prev = 0;
 
 	Mat frame_gray;
+
+	// Матрицы камеры. Получены при калибровке
+	Mat cMatrix640;
+	Mat distortion640;
+	Mat cMatrix1280;
+	Mat distortion1280;
+
+	// Координаты маркеров донной станции в глобальной системе координат
+	vector<Point3d> model_points;
+
+	Mat Rvec;
+	Mat Tvec;
+
+	float markerLen = 100; // здесь именно расстояние между нашими маркерами, а не сторона одного маркера
 
 public:
 	Mat AUV_sees;
@@ -66,6 +81,6 @@ public:
 
 	void filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat& frame_gray, markerType m_type, Mat AUV_sees, bool debug);
 	void arrange_markers(Mat& frame, bool debug);
-	void estimatePos();
+	void estimatePos(Mat& frame, bool draw_perp);
 };
 
