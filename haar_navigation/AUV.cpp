@@ -5,8 +5,8 @@ AUV::AUV(string path1, string path2) {
 	marker_1_path = path1;
 	marker_2_path = path2;
 
-	//m1.resize(2);
-	//m2.resize(2);
+	m1.resize(2);
+	m2.resize(2);
 
 	//-- 1. Load the cascades
 	if (!marker_type_1.load(marker_1_path)) {
@@ -288,11 +288,11 @@ void AUV::calculate_deltas(Mat& frame, bool debug) {
 	return;
 }
 
-vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat& frame_gray, markerType m_type, Mat AUV_sees, bool debug = false) {
+void AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat& frame_gray, markerType m_type, Mat AUV_sees, bool debug = false) {
 
-	vector<Rect> markers_;
-	vector<Rect> hough_valid;
-	Mat roi;
+	vector<Marker> markers_;
+	vector<Marker> hough_valid;
+	Mat roi_mat;
 
 	sort(objects.begin(), objects.end(), compar);
 	//print_objects(objects);
@@ -305,18 +305,18 @@ vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat&
 	for (int i = 0; i < objects.size(); i++) {
 
 		vector<Vec3f> circles;
-		roi = frame_gray(objects[i]);
-		medianBlur(roi, roi, 5);
+		roi_mat = frame_gray(objects[i]);
+		medianBlur(roi_mat, roi_mat, 5);
 
-		//Mat t = Marker::get_template_t2(roi.rows, roi.cols);
+		//Mat t = Marker::get_template_t2(roi_mat.rows, roi_mat.cols);
 		//imshow("Mat t", t);
 
 		/*
 		Ищем все кружочки внутри одного ROI
 		*/
-		HoughCircles(roi, circles, HOUGH_GRADIENT, 1,
+		HoughCircles(roi_mat, circles, HOUGH_GRADIENT, 1,
 			frame_gray.rows / 16,  // change this value to detect circles with different distances to each other
-			100, 30, 0.25 * roi.rows, 0.50 * roi.rows // change the last two parameters
+			100, 30, 0.25 * roi_mat.rows, 0.50 * roi_mat.rows // change the last two parameters
 			// (min_radius & max_radius) to detect larger circles
 		);
 
@@ -324,37 +324,32 @@ vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat&
 		Если каскад указал на объект и детектор Хаффа нашёл кружочек, то скорее всего, это то что нужно
 		*/
 		if (circles.size() == 1) {
-			hough_valid.push_back(objects[i]);
 
-			Marker temp_m(objects[i].x + int(circles[0][0]), objects[i].y + int(circles[0][1]), m_type);
-
-			//if (m_type == markerType::black_circle)
-			//	m1.push_back(temp_m);
-			//else
-			//	m2.push_back(temp_m);
+			Marker temp_m(objects[i].x + int(circles[0][0]), objects[i].y + int(circles[0][1]), m_type, objects[i]);
+			hough_valid.push_back(temp_m);
 		}
 		/*
-		В одном roi кружочков больше одного. Что странно
+		В одном roi_mat кружочков больше одного. Что странно
 		Этот блок практически ничего не делает. За всё тестовое видео сработал 4 раза
 		*/
 		else if (circles.size() > 1) {
 
 			Mat t;
 			if (m_type == markerType::black_circle) {
-				t = Marker::get_template_t1(roi.rows, roi.cols);
-				threshold(roi, roi, 200, 255, 0);
-				absdiff(roi, t, roi);
-				int nonZero = countNonZero(roi);
+				t = Marker::get_template_t1(roi_mat.rows, roi_mat.cols);
+				threshold(roi_mat, roi_mat, 200, 255, 0);
+				absdiff(roi_mat, t, roi_mat);
+				int nonZero = countNonZero(roi_mat);
 
 				//if (nonZero < 0.1 * frame_gray.cols) {
 				//	hough_valid.push_back(objects[i]);
 				//}
 			}
 			else {
-				t = Marker::get_template_t2(roi.rows, roi.cols);
-				threshold(roi, roi, 200, 255, 0);
-				absdiff(roi, t, roi);
-				int nonZero = countNonZero(roi);
+				t = Marker::get_template_t2(roi_mat.rows, roi_mat.cols);
+				threshold(roi_mat, roi_mat, 200, 255, 0);
+				absdiff(roi_mat, t, roi_mat);
+				int nonZero = countNonZero(roi_mat);
 				//if (nonZero < 0.15 * frame_gray.cols) {
 				//	hough_valid.push_back(objects[i]);
 				//}
@@ -369,22 +364,22 @@ vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat&
 			
 
 			if (m_type == markerType::black_circle) {
-				t = Marker::get_template_t1(roi.rows, roi.cols);
-				threshold(roi, roi, 60, 255, THRESH_BINARY);
-				//imshow("roi m1 thresholded", roi);
+				t = Marker::get_template_t1(roi_mat.rows, roi_mat.cols);
+				threshold(roi_mat, roi_mat, 60, 255, THRESH_BINARY);
+				//imshow("roi_mat m1 thresholded", roi_mat);
 
-				absdiff(roi, t, roi);
-				int nonZero = countNonZero(roi);
+				absdiff(roi_mat, t, roi_mat);
+				int nonZero = countNonZero(roi_mat);
 				//cout << "m1 = " << setw(7) << nonZero << "\n";
 				//fout << "m1 = " << nonZero << "\n";
 			}
 			else {
-				t = Marker::get_template_t2(roi.rows, roi.cols);
-				threshold(roi, roi, 200, 255, THRESH_BINARY);
-				//imshow("roi m2 thresholded", roi);
+				t = Marker::get_template_t2(roi_mat.rows, roi_mat.cols);
+				threshold(roi_mat, roi_mat, 200, 255, THRESH_BINARY);
+				//imshow("roi_mat m2 thresholded", roi_mat);
 
-				absdiff(roi, t, roi);
-				int nonZero = countNonZero(roi);
+				absdiff(roi_mat, t, roi_mat);
+				int nonZero = countNonZero(roi_mat);
 				//cout << "m2 = " << setw(7) << nonZero << "\n";
 				//fout << "m2 = " << nonZero << "\n";
 			}
@@ -398,8 +393,8 @@ vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat&
 	if (hough_valid.size() > 2) {
 		for (size_t i = 0; i < hough_valid.size() - 1; i++) {
 
-			int max_width = max(hough_valid[i].width, hough_valid[i + 1].width);
-			int min_width = min(hough_valid[i].width, hough_valid[i + 1].width);
+			int max_width = max(hough_valid[i].roi.width, hough_valid[i + 1].roi.width);
+			int min_width = min(hough_valid[i].roi.width, hough_valid[i + 1].roi.width);
 
 			int delta = max_width - min_width;
 			//delta = abs(delta);
@@ -416,18 +411,21 @@ vector<Rect> AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat&
 			}
 		}
 	}
+	else if (hough_valid.size() == 2){
+
+		if (m_type == markerType::black_circle) {
+			m1[0] = hough_valid[0];
+			m1[1] = hough_valid[1];
+		}
+		else {
+			m2[0] = hough_valid[0];
+			m2[1] = hough_valid[1];
+		}
+	}
 	else {
-		markers_ = hough_valid;
+		//pass
 	}
-
-	for (int i = 0; i < markers_.size(); i++) {
-		Point center(markers_[i].x + markers_[i].width / 2, markers_[i].y + markers_[i].height / 2);
-		ellipse(currentFrame, center, Size(5, 5), 0, 0, 360, Scalar(0, 0, 255), 4);
-	}
-
-	if (debug)
-		//print_objects(markers);
-	return markers_;
+	return;
 }
 
 
@@ -536,45 +534,45 @@ void AUV::get_orientation(Mat &frame) {
 	marker_type_2.detectMultiScale(frame_gray, markers2);
 
 
-	vector<Rect> markers1_filtered = filter_objects_2(markers1, frame, frame_gray, markerType::black_circle, AUV_sees, false);
-	vector<Rect> markers2_filtered = filter_objects_2(markers2, frame, frame_gray, markerType::white_circle, AUV_sees, false);
+	filter_objects_2(markers1, frame, frame_gray, markerType::black_circle, AUV_sees, false);
+	filter_objects_2(markers2, frame, frame_gray, markerType::white_circle, AUV_sees, false);
 
-	//if (markers1_filtered.size() == 2) {
+	print_objects(m1, "-");
 
-	//	Marker temp_m(objects[i].x + int(circles[0][0]), objects[i].y + int(circles[0][1]), m_type);
-	//	m1.push_back(temp_m);
+	////if (markers1_filtered.size() == 2) {
+
+	////	Marker temp_m(objects[i].x + int(circles[0][0]), objects[i].y + int(circles[0][1]), m_type);
+	////	m1.push_back(temp_m);
+	////}
+
+	//Mat our_markers = Mat::zeros(frame.size(), CV_8UC1);
+
+	//this->rotate_over_normal(frame, markers1, markers2);
+	//this->arrange_markers(our_markers);
+	//this->calculate_distance(frame, markers1, markers2, false);
+	////this->calculate_deltas(frame, true);
+
+	//this->estimatePos();
+
+	//AUV_sees = Mat::zeros(frame.size(), CV_8UC1);
+
+	//for (int i = 0; i < m1.size(); i++) {
+	//	rectangle(AUV_sees, m1[i].roi_mat, WHT, -1);
+	//}
+	//for (int i = 0; i < m2.size(); i++) {
+	//	rectangle(AUV_sees, m2[i].roi_mat, WHT, -1);
 	//}
 
-	Mat our_markers = Mat::zeros(frame.size(), CV_8UC1);
+	////cout << m1.size() << " " << m2.size() << "\n";
 
-	this->rotate_over_normal(frame, markers1, markers2);
-	this->arrange_markers(our_markers);
-	this->calculate_distance(frame, markers1, markers2, false);
-	//this->calculate_deltas(frame, true);
+	//draw_configuration(our_markers, this->m1, this->m2);
 
-	this->estimatePos();
+	////imshow("AUV mask", AUV_sees);
+	//AUV_sees = AUV_sees & frame_gray;
 
-	AUV_sees = Mat::zeros(frame.size(), CV_8UC1);
+	//imshow("AUV sees", AUV_sees);
+	//imshow("our markers", our_markers);
 
-	for (int i = 0; i < markers1_filtered.size(); i++) {
-		rectangle(AUV_sees, markers1_filtered[i], WHT, -1);
-	}
-	for (int i = 0; i < markers2_filtered.size(); i++) {
-		rectangle(AUV_sees, markers2_filtered[i], WHT, -1);
-	}
-
-	//cout << m1.size() << " " << m2.size() << "\n";
-
-	draw_configuration(our_markers, this->m1, this->m2);
-
-	//imshow("AUV mask", AUV_sees);
-	AUV_sees = AUV_sees & frame_gray;
-
-	imshow("AUV sees", AUV_sees);
-	imshow("our markers", our_markers);
-
-	draw_objects(frame, markers1_filtered, YEL);
-	draw_objects(frame, markers2_filtered, PNK);
-
-
+	draw_objects(frame, m1, YEL);
+	draw_objects(frame, m2, PNK);
 }

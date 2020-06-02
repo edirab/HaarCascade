@@ -34,7 +34,8 @@ public:
 	//int roi_x, roi_y, roi_w, roi_h;
 	Rect roi;
 
-	Marker(int _x, int _y, enum markerType _t);
+	Marker();
+	Marker(int _x, int _y, enum markerType _t, Rect roi_rect);
 
 	static Mat get_template_t1(int w, int h);
 	static Mat get_template_t2(int w, int h);

@@ -18,13 +18,15 @@ void draw_configuration(Mat& frame, vector<Marker> m1, vector<Marker> m2) {
 /*
 Отобразить объекты из вектора на изображении
 */
-void draw_objects(Mat& frame, vector<Rect> objects, Scalar color) {
+void draw_objects(Mat& frame, vector<Marker> objects, Scalar color) {
 
 	for (size_t i = 0; i < objects.size(); i++) {
-		//cout << "X = " << objects[i].x << " Y = " << objects[i].y << "\n";
-		//Point center(objects[i].x + objects[i].width / 2, objects[i].y + objects[i].height / 2);
-		//ellipse(frame, center, Size(objects[i].width / 2, objects[i].height / 2), 0, 0, 360, color, 2);
-		rectangle(frame, objects[i], color);
+		rectangle(frame, objects[i].roi, color);
+	}
+
+	for (int i = 0; i < objects.size(); i++) {
+		Point center(objects[i].x, objects[i].y);
+		ellipse(frame, center, Size(5, 5), 0, 0, 360, Scalar(0, 0, 255), 4);
 	}
 }
 
@@ -32,10 +34,11 @@ void draw_objects(Mat& frame, vector<Rect> objects, Scalar color) {
 /*
 Вывод в консоль всех параметров прямоугольников
 */
-void print_objects(vector<Rect> ob, string title = "Objects") {
+void print_objects(vector<Marker> ob, string title = "Objects") {
 
 	for (int i = 0; i < ob.size(); i++) {
-		cout << setw(2) << i << " x: " << setw(5) << ob[i].x << " y: " << setw(5) << ob[i].y << " w: " << setw(5) << ob[i].width << " h:" << setw(5) << ob[i].height << "\n";
+		cout << setw(2) << i+1 << " x: " << setw(5) << ob[i].x << " y: " << setw(5) << ob[i].y << "\n";
+		//setw(5) << ob[i].y << " w: " << setw(5) << ob[i].roi.width << " h:" << setw(5) << ob[i].height << "\n";
 	}
 	cout << "\n";
 }
@@ -147,7 +150,7 @@ vector<Rect> filter_objects(vector<Rect> objects, Mat& currentFrame, Mat& frame_
 	}
 
 	if (debug)
-		print_objects(markers);
+		//print_objects(markers);
 	return markers;
 }
 

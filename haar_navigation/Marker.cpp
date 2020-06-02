@@ -1,10 +1,19 @@
 #include "Marker.h"
 
-Marker::Marker(int _x, int _y, enum markerType _t) {
+
+Marker::Marker() {
+
+	this->x = 0;
+	this->y = 0;
+	this->t = markerType::black_circle;
+}
+
+Marker::Marker(int _x, int _y, enum markerType _t, Rect roi) {
 
 	this->x = _x;
 	this->y = _y;
 	this->t = _t;
+	this->roi = roi;
 }
 
 Mat Marker::get_template_t1(int width, int height) {
