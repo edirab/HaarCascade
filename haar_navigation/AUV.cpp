@@ -34,7 +34,7 @@ AUV ::~AUV() {
 	Определяет наклон камеры по крену (ну почти)
 	в диапазоне от -90 до +90 градусов
 */
-void AUV::rotate_over_normal(Mat& frame, vector<Rect> m1, vector<Rect> m2) {
+void AUV::rotate_over_normal(Mat& frame) {
 
 	static double delta_x = 0;
 	static double delta_y = 0;
@@ -75,7 +75,8 @@ void AUV::rotate_over_normal(Mat& frame, vector<Rect> m1, vector<Rect> m2) {
 	return;
 }
 
-void AUV::arrange_markers(Mat& frame) {
+
+void AUV::arrange_markers(Mat& frame, bool debug) {
 
 	//assert(m1.size() == 2 && m2.size() == 2);
 
@@ -109,79 +110,19 @@ void AUV::arrange_markers(Mat& frame) {
 			COLOR = RED;
 		}
 
-		putText(frame, String("11"), Point(m1[0].x + 10, m1[0].y - 10), 1, 1, COLOR);
-		putText(frame, String("12"), Point(m1[1].x + 10, m1[1].y - 10), 1, 1, COLOR);
-		putText(frame, String("21"), Point(m2[0].x + 10, m2[0].y - 10), 1, 1, COLOR);
-		putText(frame, String("22"), Point(m2[1].x + 10, m2[1].y - 10), 1, 1, COLOR);
+		if (debug) {
+			putText(frame, String("11"), Point(m1[0].x + 10, m1[0].y - 10), 1, 1, COLOR);
+			putText(frame, String("12"), Point(m1[1].x + 10, m1[1].y - 10), 1, 1, COLOR);
+			putText(frame, String("21"), Point(m2[0].x + 10, m2[0].y - 10), 1, 1, COLOR);
+			putText(frame, String("22"), Point(m2[1].x + 10, m2[1].y - 10), 1, 1, COLOR);
+
+			draw_configuration(frame, this->m1, this->m2);
+		}
 	}
 }
 
 
-void AUV::detect_and_display(Mat frame, int cascadeNum, bool saveFalsePositive = false) {
-	//cout << "Inside detect_Display";
-
-	//Mat frame_gray;
-
-	//cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
-	//equalizeHist(frame_gray, frame_gray);
-
-	////imshow("Grayscale", frame_gray);
-
-	////-- Detect object
-	//std::vector<Rect> objects;
-	//Scalar* color = new Scalar(255, 0, 0);
-
-	//switch (cascadeNum) {
-
-	//case 1:
-	//	marker_type_1.detectMultiScale(frame_gray, objects);
-	//	color = new Scalar(255, 0, 255);
-	//	break;
-	//case 2:
-	//	marker_type_2.detectMultiScale(frame_gray, objects);
-	//	color = new Scalar(0, 255, 255);
-	//	break;
-	//default:
-	//	cout << "Error in switch-case detecting block \n";
-	//	break;
-	//}
-
-	//draw_objects(frame, objects, *color);
-
-	////-- Show what you got
-	//switch (cascadeNum) {
-
-	//case 1:
-	//	imshow("Markers #1 ", frame);
-	//	if (objects.size() == 2)
-	//		marker1Counter++;
-
-	//	if (objects.size() > 2 && saveFalsePositive) {
-	//		//string filename = "../../preparing navigation/false_positive_1/" + to_string(false_positive_counter++) + ".jpg";
-	//		string filename = "E:/University/10sem/nirs/haar_3_4_6/preparing navigation/false_positive_1/" + to_string(false_positive_counter++) + ".jpg";
-
-	//		imwrite(filename, frame);
-	//	}
-	//	break;
-	//case 2:
-	//	imshow("Marker #2", frame);
-	//	if (objects.size() == 2)
-	//		marker2Counter++;
-
-	//	if (objects.size() > 2 && saveFalsePositive) {
-	//		//string filename = "../../preparing navigation/false_positive_2/" + to_string(false_positive_counter++) + ".jpg";
-	//		string filename = "E:/University/10sem/nirs/haar_3_4_6/preparing navigation/false_positive_2/" + to_string(false_positive_counter++) + ".jpg";
-	//		imwrite(filename, frame);
-	//	}
-	//	break;
-	//default:
-	//	cout << "Error in switch-case showing block \n";
-	//	break;
-	//}
-	return;
-}
-
-void AUV::calculate_distance(Mat& frame, vector<Rect> m1, vector<Rect> m2, bool debug) {
+void AUV::calculate_distance(Mat& frame, bool debug) {
 	
 	if (m1.size() == 2) {
 		//Point a, b;
@@ -537,41 +478,32 @@ void AUV::get_orientation(Mat &frame) {
 	filter_objects_2(markers1, frame, frame_gray, markerType::black_circle, AUV_sees, false);
 	filter_objects_2(markers2, frame, frame_gray, markerType::white_circle, AUV_sees, false);
 
-	print_objects(m1, "-");
+	//print_objects(m1, "-");
 
-	////if (markers1_filtered.size() == 2) {
+	Mat our_markers = Mat::zeros(frame.size(), CV_8UC1);
 
-	////	Marker temp_m(objects[i].x + int(circles[0][0]), objects[i].y + int(circles[0][1]), m_type);
-	////	m1.push_back(temp_m);
-	////}
-
-	//Mat our_markers = Mat::zeros(frame.size(), CV_8UC1);
-
-	//this->rotate_over_normal(frame, markers1, markers2);
-	//this->arrange_markers(our_markers);
-	//this->calculate_distance(frame, markers1, markers2, false);
+	this->rotate_over_normal(frame);
+	this->arrange_markers(our_markers, true);
+	this->calculate_distance(frame, false);
 	////this->calculate_deltas(frame, true);
 
-	//this->estimatePos();
+	this->estimatePos();
 
-	//AUV_sees = Mat::zeros(frame.size(), CV_8UC1);
+	AUV_sees = Mat::zeros(frame.size(), CV_8UC1);
 
-	//for (int i = 0; i < m1.size(); i++) {
-	//	rectangle(AUV_sees, m1[i].roi_mat, WHT, -1);
-	//}
-	//for (int i = 0; i < m2.size(); i++) {
-	//	rectangle(AUV_sees, m2[i].roi_mat, WHT, -1);
-	//}
+	for (int i = 0; i < m1.size(); i++) {
+		rectangle(AUV_sees, m1[i].roi, WHT, -1);
+	}
+	for (int i = 0; i < m2.size(); i++) {
+		rectangle(AUV_sees, m2[i].roi, WHT, -1);
+	}
 
 	////cout << m1.size() << " " << m2.size() << "\n";
-
-	//draw_configuration(our_markers, this->m1, this->m2);
-
 	////imshow("AUV mask", AUV_sees);
 	//AUV_sees = AUV_sees & frame_gray;
 
 	//imshow("AUV sees", AUV_sees);
-	//imshow("our markers", our_markers);
+	imshow("our markers", our_markers);
 
 	draw_objects(frame, m1, YEL);
 	draw_objects(frame, m2, PNK);

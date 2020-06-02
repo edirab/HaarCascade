@@ -42,7 +42,7 @@ int main(int argc, const char** argv) {
 
 	bool use_LBP = true;
 	bool use_video = false;
-	bool debug_on_image = true;
+	bool debug_on_image = false;
 
 	int camera_device = parser.get<int>("camera");
 	int frameno = 0;
