@@ -5,12 +5,36 @@
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/aruco.hpp>
+//#include "Utils.h"
 #include <iostream>
 #include <cstdlib>
+#include <iomanip>
 
 
 using namespace std;
 using namespace cv;
+
+bool debug_on_image = false;
+
+Mat cMatrix640 = (Mat_<double>(3, 3) << 5.3226273868525448e+02, 0, 3.2590522394049350e+02, 0, 5.3226273868525448e+02, 2.6946997900677803e+02, 0, 0, 1);
+Mat distortion640 = (Mat_<double>(1, 5) << 0, -6.1539772782054671e-02, 0, 0, 1.7618036793466491e-02);
+
+//Mat rvecs, tvecs;
+vector<Vec3d> rvecs, tvecs;
+
+Mat frame;
+Mat frame_copy;
+//Mat image;
+//Mat image_copy;
+VideoCapture capture;
+
+vector<int> ids;
+vector<std::vector<cv::Point2f>> corners;
+
+Mat rotMat(3, 3, CV_64F);
+Mat Euler(3, 3, CV_64F);
+
+Vec3f Eul;
 
 void test() {
 
@@ -78,15 +102,10 @@ void test() {
 
 }
 
-Mat cMatrix640 = (Mat_<double>(3, 3) << 5.3226273868525448e+02, 0, 3.2590522394049350e+02, 0, 5.3226273868525448e+02, 2.6946997900677803e+02, 0, 0, 1);
-Mat distortion640 = (Mat_<double>(1, 5) << 0, -6.1539772782054671e-02, 0, 0, 1.7618036793466491e-02);
-
-//Mat rvecs, tvecs;
-vector<Vec3d> rvecs, tvecs;
 
 // Checks if a matrix is a valid rotation matrix.
-bool isRotationMatrix(Mat& R)
-{
+bool isRotationMatrix(Mat& R) {
+
 	Mat Rt;
 	transpose(R, Rt);
 	Mat shouldBeIdentity = Rt * R;
@@ -126,38 +145,84 @@ Vec3f rotationMatrixToEulerAngles(Mat& R) {
 
 int main(int argc, char* argv[]) {
 
-	Mat image = imread("E:/University/10sem/nirs/haar_3_4_6/comparioson/01.jpg");
-	Mat image_copy;
+	//image = imread("E:/University/10sem/nirs/haar_3_4_6/comparioson/01.jpg");
 	namedWindow("Marker", WINDOW_NORMAL);
 
-	image.copyTo(image_copy);
+	//image.copyTo(image_copy);
 
 	Ptr<aruco::Dictionary> dictionary = aruco::getPredefinedDictionary(aruco::DICT_ARUCO_ORIGINAL);
 
-	std::vector<int> ids;
-	std::vector<std::vector<cv::Point2f>> corners;
 
-	cv::aruco::detectMarkers(image, dictionary, corners, ids);
-	cv::aruco::drawDetectedMarkers(image_copy, corners, ids);
-
-	cv::aruco::estimatePoseSingleMarkers(corners, 30, cMatrix640, distortion640, rvecs, tvecs);
-
-	//cout << rvecs << "\n";
-
-	//bool check = isRotationMatrix(rvecs);
-	//cout << check << "\n";
-
-	//Vec3f rv = rotationMatrixToEulerAngles(rvecs);
-
-	for (int i = 0; i < 3; i++) {
-		cout << rvecs[0][i]*180/3.1415926 << "\n";
+	if (!debug_on_image) {
+		capture.open(0);
+	}
+	else if (!debug_on_image) {
+		capture.open("***.mp4");
 	}
 
-	imshow("Marker", image_copy);
+	if (!capture.isOpened() && !debug_on_image) {
+		cout << "--(!)Error opening video capture\n";
+		return -1;
+	}
 
-	//imshow("Marker2", image_copy);
+	if (debug_on_image) {
+		frame = imread("E:/University/10sem/nirs/haar_3_4_6/comparioson/01.jpg");
+	}
+
+	do {
+		if (!debug_on_image) {
+			capture.read(frame);
+			frame.copyTo(frame_copy);
+		}
+
+		if (frame.empty()) {
+			cout << "--(!) No captured frame -- Break!\n";
+			break;
+		}
+
+		cv::aruco::detectMarkers(frame, dictionary, corners, ids);
+		cv::aruco::drawDetectedMarkers(frame_copy, corners, ids);
+
+		cv::aruco::estimatePoseSingleMarkers(corners, 30, cMatrix640, distortion640, rvecs, tvecs);
+
+		//cout << rvecs << "\n";
+
+		Rodrigues(rvecs[0], rotMat);
+
+		//bool check = isRotationMatrix(rotMat);
+		//cout << check << "\n";
+
+		Eul = rotationMatrixToEulerAngles(rotMat);
+
+		cout << setprecision(3);
+
+		//if (rvecs.size() != 0) {
+		//	for (int i = 0; i < 3; i++) {
+		//		cout << setw(7) << rvecs[0][i] * 180 / 3.1415926 << " ";
+		//	}
+		//	cout << "\n";
+		//}
+
+		if (rvecs.size() != 0) {
+			cout << setw(7) << Eul[0]*180/3.1415926 << setw(7) << Eul[1] * 180 / 3.1415926 << setw(7) << Eul[2] * 180 / 3.1415926 << "\n";
+		}
+
+		
+
+
+		imshow("Marker", frame_copy);
+
+		if (waitKey(25) == 27)
+			break;
+
+	}
+	while (!debug_on_image);
+
+	if (debug_on_image)
 	waitKey(0);
 
+	//imshow("Marker2", image_copy);
+	//waitKey(0);
 
 	return 0;
 }
