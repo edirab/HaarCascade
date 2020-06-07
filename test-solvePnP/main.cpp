@@ -4,12 +4,15 @@
 */
 
 #include <opencv2/opencv.hpp>
+#include <opencv2/aruco.hpp>
+#include <iostream>
+#include <cstdlib>
+
 
 using namespace std;
 using namespace cv;
 
-
-int main(int argc, char* argv[]) {
+void test() {
 
 	// Read input image
 	cv::Mat im = cv::imread("E:/University/10sem/nirs/haar_3_4_6/head.jpg");
@@ -72,6 +75,89 @@ int main(int argc, char* argv[]) {
 	// Display image.
 	cv::imshow("Output", im);
 	cv::waitKey(0);
+
+}
+
+Mat cMatrix640 = (Mat_<double>(3, 3) << 5.3226273868525448e+02, 0, 3.2590522394049350e+02, 0, 5.3226273868525448e+02, 2.6946997900677803e+02, 0, 0, 1);
+Mat distortion640 = (Mat_<double>(1, 5) << 0, -6.1539772782054671e-02, 0, 0, 1.7618036793466491e-02);
+
+//Mat rvecs, tvecs;
+vector<Vec3d> rvecs, tvecs;
+
+// Checks if a matrix is a valid rotation matrix.
+bool isRotationMatrix(Mat& R)
+{
+	Mat Rt;
+	transpose(R, Rt);
+	Mat shouldBeIdentity = Rt * R;
+	Mat I = Mat::eye(3, 3, shouldBeIdentity.type());
+
+	return  norm(I, shouldBeIdentity) < 1e-6;
+
+}
+
+// Calculates rotation matrix to euler angles
+// The result is the same as MATLAB except the order
+// of the euler angles ( x and z are swapped ).
+Vec3f rotationMatrixToEulerAngles(Mat& R) {
+
+	assert(isRotationMatrix(R));
+
+	float sy = sqrt(R.at<double>(0, 0) * R.at<double>(0, 0) + R.at<double>(1, 0) * R.at<double>(1, 0));
+
+	bool singular = sy < 1e-6; // If
+
+	float x, y, z;
+	if (!singular)
+	{
+		x = atan2(R.at<double>(2, 1), R.at<double>(2, 2));
+		y = atan2(-R.at<double>(2, 0), sy);
+		z = atan2(R.at<double>(1, 0), R.at<double>(0, 0));
+	}
+	else
+	{
+		x = atan2(-R.at<double>(1, 2), R.at<double>(1, 1));
+		y = atan2(-R.at<double>(2, 0), sy);
+		z = 0;
+	}
+	return Vec3f(x, y, z);
+}
+
+
+int main(int argc, char* argv[]) {
+
+	Mat image = imread("E:/University/10sem/nirs/haar_3_4_6/comparioson/01.jpg");
+	Mat image_copy;
+	namedWindow("Marker", WINDOW_NORMAL);
+
+	image.copyTo(image_copy);
+
+	Ptr<aruco::Dictionary> dictionary = aruco::getPredefinedDictionary(aruco::DICT_ARUCO_ORIGINAL);
+
+	std::vector<int> ids;
+	std::vector<std::vector<cv::Point2f>> corners;
+
+	cv::aruco::detectMarkers(image, dictionary, corners, ids);
+	cv::aruco::drawDetectedMarkers(image_copy, corners, ids);
+
+	cv::aruco::estimatePoseSingleMarkers(corners, 30, cMatrix640, distortion640, rvecs, tvecs);
+
+	//cout << rvecs << "\n";
+
+	//bool check = isRotationMatrix(rvecs);
+	//cout << check << "\n";
+
+	//Vec3f rv = rotationMatrixToEulerAngles(rvecs);
+
+	for (int i = 0; i < 3; i++) {
+		cout << rvecs[0][i]*180/3.1415926 << "\n";
+	}
+
+	imshow("Marker", image_copy);
+
+	//imshow("Marker2", image_copy);
+	waitKey(0);
+
 
 	return 0;
 }
