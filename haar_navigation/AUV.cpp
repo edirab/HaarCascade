@@ -102,28 +102,41 @@ void AUV::arrange_markers(Mat& frame, bool debug) {
 
 	//assert(m1.size() == 2 && m2.size() == 2);
 
-	if ((m1.size() == 2 && m2.size() == 2)) {
+	if ((m1.size() == 2 && m2.size() == 2)) 
+	{
+		bool for_comparison = true;
 
-		if (this->d_roll > 0) {
-
-			//if (m1[0].x > m1[1].x && m1[0].y < m1[1].y) {
-			if (m1[0].y < m1[1].y) {
+		if (for_comparison)
+		{
+			if (m1[0].x > m1[1].x) {
 				swap(m1[0], m1[1]);
 			}
-			if (m2[0].y < m2[1].y) {
+			if (m2[0].x > m2[1].x) {
 				swap(m2[0], m2[1]);
 			}
 		}
-		else if (this->d_roll <= 0) {
+		else 
+		{
+			if (this->d_roll > 0) {
 
-			if (m1[0].y > m1[1].y) {
-				swap(m1[0], m1[1]);
+				//if (m1[0].x > m1[1].x && m1[0].y < m1[1].y) {
+				if (m1[0].y < m1[1].y) {
+					swap(m1[0], m1[1]);
+				}
+				if (m2[0].y < m2[1].y) {
+					swap(m2[0], m2[1]);
+				}
 			}
-			if (m2[0].y > m2[1].y) {
-				swap(m2[0], m2[1]);
+			else if (this->d_roll <= 0) {
+
+				if (m1[0].y > m1[1].y) {
+					swap(m1[0], m1[1]);
+				}
+				if (m2[0].y > m2[1].y) {
+					swap(m2[0], m2[1]);
+				}
 			}
 		}
-
 		Scalar COLOR;
 		if (frame.channels() == 1) {
 			COLOR = WHT;
@@ -391,6 +404,32 @@ void AUV::filter_objects_2(vector<Rect> objects, Mat& currentFrame, Mat& frame_g
 	return;
 }
 
+// Calculates rotation matrix to euler angles
+// The result is the same as MATLAB except the order
+// of the euler angles ( x and z are swapped ).
+Vec3f rotationMatrixToEulerAngles(Mat& R) {
+
+	assert(isRotationMatrix(R));
+
+	float sy = sqrt(R.at<double>(0, 0) * R.at<double>(0, 0) + R.at<double>(1, 0) * R.at<double>(1, 0));
+
+	bool singular = sy < 1e-6; // If
+
+	float x, y, z;
+	if (!singular)
+	{
+		x = atan2(R.at<double>(2, 1), R.at<double>(2, 2));
+		y = atan2(-R.at<double>(2, 0), sy);
+		z = atan2(R.at<double>(1, 0), R.at<double>(0, 0));
+	}
+	else
+	{
+		x = atan2(-R.at<double>(1, 2), R.at<double>(1, 1));
+		y = atan2(-R.at<double>(2, 0), sy);
+		z = 0;
+	}
+	return Vec3f(x, y, z);
+}
 
 void AUV::estimatePos(Mat &frame, bool draw_perp) {
 
@@ -409,15 +448,26 @@ void AUV::estimatePos(Mat &frame, bool draw_perp) {
 		solvePnP(model_points, corners, cMatrix640, distortion640, this->Rvec, this->Tvec);
 		//solvePnP(model_points, corners, camera_matrix, distortion640, Rvec, Tvec);
 
-		//cout << "Rotation Vector " << endl << Rvec << endl;
-		//cout << "Translation Vector" << endl << Tvec << endl;
+		Mat rotMat(3, 3, CV_64F);
+		Rodrigues(this->Rvec, rotMat);
 
-		cout << setprecision(5);
+		Vec3f Eul = rotationMatrixToEulerAngles(rotMat);
+		cout << setprecision(3);
+		//cout << setw(7) << Eul[0] * 180 / 3.1415926 << setw(7) << Eul[1] * 180 / 3.1415926 << setw(7) << Eul[2] * 180 / 3.1415926 << "\n";
+		cout  << Eul[1] * 180 / 3.1415926  << "\n";
+	
 
-		for (int j = 0; j < Tvec.rows; j++) {
-			cout << setw(8) << Tvec.at<double>(j, 0);
+		bool show_tvec = false;
+
+		if (show_tvec) {
+			cout << setprecision(5);
+
+			for (int j = 0; j < Tvec.rows; j++) {
+				cout << setw(8) << Tvec.at<double>(j, 0);
+			}
+			cout << "\n";
 		}
-		cout << "\n";
+
 
 		if (draw_perp) {
 

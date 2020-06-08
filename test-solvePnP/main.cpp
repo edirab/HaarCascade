@@ -5,7 +5,6 @@
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/aruco.hpp>
-//#include "Utils.h"
 #include <iostream>
 #include <cstdlib>
 #include <iomanip>
@@ -166,19 +165,19 @@ int main(int argc, char* argv[]) {
 	}
 
 	if (debug_on_image) {
-		frame = imread("E:/University/10sem/nirs/haar_3_4_6/comparioson/01.jpg");
+		frame = imread("E:/University/10sem/nirs/haar_3_4_6/comparioson/04.jpg");
 	}
 
 	do {
 		if (!debug_on_image) {
 			capture.read(frame);
-			frame.copyTo(frame_copy);
 		}
 
 		if (frame.empty()) {
 			cout << "--(!) No captured frame -- Break!\n";
 			break;
 		}
+		frame.copyTo(frame_copy);
 
 		cv::aruco::detectMarkers(frame, dictionary, corners, ids);
 		cv::aruco::drawDetectedMarkers(frame_copy, corners, ids);
@@ -189,26 +188,17 @@ int main(int argc, char* argv[]) {
 
 		Rodrigues(rvecs[0], rotMat);
 
-		//bool check = isRotationMatrix(rotMat);
-		//cout << check << "\n";
+	
+		if (isRotationMatrix(rotMat)) {
+			Eul = rotationMatrixToEulerAngles(rotMat);
 
-		Eul = rotationMatrixToEulerAngles(rotMat);
+			cout << setprecision(3);
 
-		cout << setprecision(3);
-
-		//if (rvecs.size() != 0) {
-		//	for (int i = 0; i < 3; i++) {
-		//		cout << setw(7) << rvecs[0][i] * 180 / 3.1415926 << " ";
-		//	}
-		//	cout << "\n";
-		//}
-
-		if (rvecs.size() != 0) {
-			cout << setw(7) << Eul[0]*180/3.1415926 << setw(7) << Eul[1] * 180 / 3.1415926 << setw(7) << Eul[2] * 180 / 3.1415926 << "\n";
+			if (rvecs.size() != 0) {
+				//cout << setw(7) << Eul[0]*180/3.1415926 << setw(7) << Eul[1] * 180 / 3.1415926 << setw(7) << Eul[2] * 180 / 3.1415926 << "\n";
+				cout << Eul[1] * 180 / 3.1415926 << "\n";
+			}
 		}
-
-		
-
 
 		imshow("Marker", frame_copy);
 

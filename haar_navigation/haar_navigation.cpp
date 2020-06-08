@@ -84,7 +84,8 @@ int main(int argc, const char** argv) {
 	//VideoWriter video(abs_path, CV_FOURCC('M', 'P', '4', 'V'), 30, Size(1280, 720));
 
 	if (debug_on_image) {
-		frame = imread("E:/University/10sem/nirs/haar_3_4_6/preparing navigation/test/2.jpg");
+		//frame = imread("E:/University/10sem/nirs/haar_3_4_6/preparing navigation/test/2.jpg");
+		frame = imread("E:/University/10sem/nirs/haar_3_4_6/comparioson/09.jpg");
 	}
 
 	AUV auv(model_cascade_name, model_cascade_name_2);
