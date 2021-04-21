@@ -6,7 +6,9 @@
 #include <opencv2/opencv.hpp>
 #include "opencv2/objdetect.hpp"
 #include "opencv2/imgproc.hpp"
-#include <opencv2/cudaobjdetect.hpp>
+#include "opencv2/cudaobjdetect.hpp"
+#include "opencv2/cudaimgproc.hpp"
+#include "opencv2/cudawarping.hpp"
 
 //#include <opencv2/aruco.hpp>
 
@@ -15,6 +17,7 @@
 
 
 using namespace cv;
+//using namespace cv::cuda;
 //using namespace aruco;
 using namespace std;
 
