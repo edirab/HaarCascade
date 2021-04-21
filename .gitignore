@@ -64,4 +64,5 @@ preparing navigation/extracted_images/with_original/manually_filtering/*.jpg
 *.bak
 *.ini
 
+*.dll
 !OUTPUT.log

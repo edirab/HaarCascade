@@ -92,6 +92,8 @@ int main(int argc, const char** argv) {
 
 	
 	do {
+		double start = CLOCK();
+
 		if (!debug_on_image) {
 			capture.read(frame);
 			//frame.copyTo(frame_2);
@@ -107,10 +109,6 @@ int main(int argc, const char** argv) {
 
 		auv.get_orientation(frame);
 
-		double start = CLOCK();
-		double dur = CLOCK() - start;
-		//printf("avg time per frame %f ms. fps %f. frameno = %d\n", avgdur(dur), avgfps(), frameno++);
-
 		//namedWindow("Orientation", WINDOW_NORMAL);
 		//resizeWindow("Orientation", 1280, int( frame.rows/(frame.cols/1280)));
 		//resizeWindow("Orientation", 1280, 891);
@@ -119,8 +117,11 @@ int main(int argc, const char** argv) {
 		//video.write(frame);
 	
 
-		if (waitKey(25) == 27)
+		if (waitKey(1) == 27)
 			break;
+
+		double dur = CLOCK() - start;
+		printf("avg time per frame %f ms. fps %f. frameno = %d\n", avgdur(dur), avgfps(), frameno++);
 	}
 	while (!debug_on_image);
 

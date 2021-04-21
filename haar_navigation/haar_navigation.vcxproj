@@ -106,13 +106,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Program Files\opencv-3-4-9\build\install\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\OpenCV\opencv-3-4-14\build\install\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Program Files\opencv-3-4-9\build\install\x64\vc16\lib;C:\Program Files\opencv-3-4-9\build\install\x64\vc16\bin</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_aruco349d.lib;opencv_bgsegm349d.lib;opencv_bioinspired349d.lib;opencv_calib3d349d.lib;opencv_ccalib349d.lib;opencv_core349d.lib;opencv_cudaarithm349d.lib;opencv_cudabgsegm349d.lib;opencv_cudacodec349d.lib;opencv_cudafeatures2d349d.lib;opencv_cudafilters349d.lib;opencv_cudaimgproc349d.lib;opencv_cudalegacy349d.lib;opencv_cudaobjdetect349d.lib;opencv_cudaoptflow349d.lib;opencv_cudastereo349d.lib;opencv_cudawarping349d.lib;opencv_cudev349d.lib;opencv_datasets349d.lib;opencv_dpm349d.lib;opencv_face349d.lib;opencv_features2d349d.lib;opencv_flann349d.lib;opencv_fuzzy349d.lib;opencv_hdf349d.lib;opencv_hfs349d.lib;opencv_highgui349d.lib;opencv_imgcodecs349d.lib;opencv_imgproc349d.lib;opencv_img_hash349d.lib;opencv_line_descriptor349d.lib;opencv_ml349d.lib;opencv_objdetect349d.lib;opencv_optflow349d.lib;opencv_phase_unwrapping349d.lib;opencv_photo349d.lib;opencv_plot349d.lib;opencv_reg349d.lib;opencv_rgbd349d.lib;opencv_saliency349d.lib;opencv_shape349d.lib;opencv_stereo349d.lib;opencv_stitching349d.lib;opencv_structured_light349d.lib;opencv_superres349d.lib;opencv_surface_matching349d.lib;opencv_tracking349d.lib;opencv_video349d.lib;opencv_videoio349d.lib;opencv_videostab349d.lib;opencv_xfeatures2d349d.lib;opencv_ximgproc349d.lib;opencv_xobjdetect349d.lib;opencv_xphoto349d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\OpenCV\opencv-3-4-14\build\install\x64\vc16\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_calib3d3414d.lib;opencv_core3414d.lib;opencv_cudaarithm3414d.lib;opencv_cudabgsegm3414d.lib;opencv_cudacodec3414d.lib;opencv_cudafeatures2d3414d.lib;opencv_cudafilters3414d.lib;opencv_cudaimgproc3414d.lib;opencv_cudalegacy3414d.lib;opencv_cudaobjdetect3414d.lib;opencv_cudaoptflow3414d.lib;opencv_cudastereo3414d.lib;opencv_cudawarping3414d.lib;opencv_cudev3414d.lib;opencv_dnn3414d.lib;opencv_features2d3414d.lib;opencv_flann3414d.lib;opencv_highgui3414d.lib;opencv_imgcodecs3414d.lib;opencv_imgproc3414d.lib;opencv_ml3414d.lib;opencv_objdetect3414d.lib;opencv_photo3414d.lib;opencv_shape3414d.lib;opencv_stitching3414d.lib;opencv_superres3414d.lib;opencv_video3414d.lib;opencv_videoio3414d.lib;opencv_videostab3414d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -145,15 +145,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\OpenCV\eigen-3.4-rc1;C:\OpenCV\boost_1_72_0;C:\OpenCV\opencv-3-4-9\build\install\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\OpenCV\eigen-3.4-rc1;C:\OpenCV\boost_1_72_0;C:\OpenCV\opencv-3-4-14\build\install\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\OpenCV\opencv-3-4-9\build\install\x64\vc16\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_aruco349.lib;opencv_bgsegm349.lib;opencv_bioinspired349.lib;opencv_calib3d349.lib;opencv_ccalib349.lib;opencv_core349.lib;opencv_datasets349.lib;opencv_dpm349.lib;opencv_face349.lib;opencv_features2d349.lib;opencv_flann349.lib;opencv_fuzzy349.lib;opencv_hdf349.lib;opencv_hfs349.lib;opencv_highgui349.lib;opencv_imgcodecs349.lib;opencv_imgproc349.lib;opencv_img_hash349.lib;opencv_line_descriptor349.lib;opencv_ml349.lib;opencv_objdetect349.lib;opencv_optflow349.lib;opencv_phase_unwrapping349.lib;opencv_photo349.lib;opencv_plot349.lib;opencv_reg349.lib;opencv_rgbd349.lib;opencv_saliency349.lib;opencv_shape349.lib;opencv_stereo349.lib;opencv_stitching349.lib;opencv_structured_light349.lib;opencv_superres349.lib;opencv_surface_matching349.lib;opencv_tracking349.lib;opencv_video349.lib;opencv_videoio349.lib;opencv_videostab349.lib;opencv_xfeatures2d349.lib;opencv_ximgproc349.lib;opencv_xobjdetect349.lib;opencv_xphoto349.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\OpenCV\opencv-3-4-14\build\install\x64\vc16\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_calib3d3414.lib;opencv_core3414.lib;opencv_cudaarithm3414.lib;opencv_cudabgsegm3414.lib;opencv_cudacodec3414.lib;opencv_cudafeatures2d3414.lib;opencv_cudafilters3414.lib;opencv_cudaimgproc3414.lib;opencv_cudalegacy3414.lib;opencv_cudaobjdetect3414.lib;opencv_cudaoptflow3414.lib;opencv_cudastereo3414.lib;opencv_cudawarping3414.lib;opencv_cudev3414.lib;opencv_dnn3414.lib;opencv_features2d3414.lib;opencv_flann3414.lib;opencv_highgui3414.lib;opencv_imgcodecs3414.lib;opencv_imgproc3414.lib;opencv_ml3414.lib;opencv_objdetect3414.lib;opencv_photo3414.lib;opencv_shape3414.lib;opencv_stitching3414.lib;opencv_superres3414.lib;opencv_video3414.lib;opencv_videoio3414.lib;opencv_videostab3414.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
