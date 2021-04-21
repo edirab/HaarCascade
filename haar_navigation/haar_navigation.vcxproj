@@ -145,14 +145,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Program Files\eigen-3-3-7;C:\Program Files\boost_1_71_0;C:\Program Files\opencv-3-4-9\build\install\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\OpenCV\eigen-3.4-rc1;C:\OpenCV\boost_1_72_0;C:\OpenCV\opencv-3-4-9\build\install\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Program Files\opencv-3-4-9\build\install\x64\vc16\bin;C:\Program Files\opencv-3-4-9\build\install\x64\vc16\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\OpenCV\opencv-3-4-9\build\install\x64\vc16\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>opencv_aruco349.lib;opencv_bgsegm349.lib;opencv_bioinspired349.lib;opencv_calib3d349.lib;opencv_ccalib349.lib;opencv_core349.lib;opencv_datasets349.lib;opencv_dpm349.lib;opencv_face349.lib;opencv_features2d349.lib;opencv_flann349.lib;opencv_fuzzy349.lib;opencv_hdf349.lib;opencv_hfs349.lib;opencv_highgui349.lib;opencv_imgcodecs349.lib;opencv_imgproc349.lib;opencv_img_hash349.lib;opencv_line_descriptor349.lib;opencv_ml349.lib;opencv_objdetect349.lib;opencv_optflow349.lib;opencv_phase_unwrapping349.lib;opencv_photo349.lib;opencv_plot349.lib;opencv_reg349.lib;opencv_rgbd349.lib;opencv_saliency349.lib;opencv_shape349.lib;opencv_stereo349.lib;opencv_stitching349.lib;opencv_structured_light349.lib;opencv_superres349.lib;opencv_surface_matching349.lib;opencv_tracking349.lib;opencv_video349.lib;opencv_videoio349.lib;opencv_videostab349.lib;opencv_xfeatures2d349.lib;opencv_ximgproc349.lib;opencv_xobjdetect349.lib;opencv_xphoto349.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
